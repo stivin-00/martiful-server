@@ -17,8 +17,8 @@ export const transporter = nodemailer.createTransport({
   },
 });
 
-export const welcomeEmailTemplate = () => {
-  `<html
+export const welcomeEmailTemplate = (name: string): string => {
+  return `<html
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:v="urn:schemas-microsoft-com:vml"
     xmlns:o="urn:schemas-microsoft-com:office:office"
@@ -776,7 +776,7 @@ export const welcomeEmailTemplate = () => {
                                         data-metadata="&lt;"
                                         style="line-height: 23.8px"
                                       ></span
-                                      >Dear [User],
+                                      >Dear ${name},
                                     </p>
                                     <p style="line-height: 170%">
                                       <br /><span
@@ -988,7 +988,7 @@ export const welcomeEmailTemplate = () => {
   </html>`;
 };
 
-export const verifyEmailTemplate = (name: string, token: string ): string => {
+export const verifyEmailTemplate = (name: string, token: string): string => {
   return `<html
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:v="urn:schemas-microsoft-com:vml"

@@ -8,7 +8,7 @@ import User from "../models/user";
 import nodemailer from "nodemailer";
 import { UserDocument } from "../types/user";
 import AuthRequest from "../types/request";
-import { mailTransporter, verifyEmailTemplate } from "../utils/email/email";
+import { mailTransporter, verifyEmailTemplate, welcomeEmailTemplate } from "../utils/email/email";
 
 export const registerUser = async (
   req: AuthRequest<Partial<UserDocument>>,
@@ -112,6 +112,9 @@ export const verifyAccount = async (
     user.isVerified = true;
     user.verificationToken = "";
     await user.save();
+
+    // send welcome mail
+    await sendWelcomeEmail(user);
 
     res.status(200).json({ message: "Account verified successfully" });
   } catch (error: any) {
@@ -298,5 +301,29 @@ async function sendVerificationEmail(user: UserDocument): Promise<void> {
     });
   } catch (error) {
     console.error("Error sending verification email:", error);
+  }
+}
+
+
+async function sendWelcomeEmail(user: UserDocument): Promise<void> {
+  let mailDetails = {
+    from: {
+      name: "Martiful Services",
+      address: "NonReply@Martiful.com",
+    },
+    to: user.email,
+    subject: "WELCOME TO MARTIFUL SERVICES",
+    html: welcomeEmailTemplate(user.firstName) || undefined,
+  };
+  try {
+    await mailTransporter.sendMail(mailDetails, function (err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(data);
+      }
+    });
+  } catch (error) {
+    console.error("Error sending welcome email:", error);
   }
 }
