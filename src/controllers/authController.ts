@@ -58,7 +58,7 @@ export const loginUser = async (
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(401).json({ message: "Invalid email or password" });
+      return res.status(401).json({ message: "User not found, please register" });
     }
 
     // Check if the password is correct
