@@ -821,7 +821,7 @@ export const welcomeEmailTemplate = (name: string): string => {
                                         data-metadata="&gt;"
                                         style="line-height: 23.8px"
                                       ></span
-                                      ><strong>AKINYEMI ABIDEMI</strong>
+                                      ><strong>AKINYEMI LATEEFAT</strong>
                                     </p>
                                     <p style="line-height: 170%">
                                       <span
