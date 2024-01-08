@@ -13,8 +13,16 @@ const userSchema = new Schema({
     unique: [true, "UserName already exists"],
   },
   email: { type: String, required: [true, "Email is required"], unique: true },
-  password: { type: String, required: [true, "Password is required"] },
-  phoneNumber: { type: String, required: [true, "Phone Number is required"] },
+  password: {
+    type: String,
+    required: [true, "Password is required"],
+    trim: true,
+  },
+  phoneNumber: {
+    type: String,
+    required: [true, "Phone Number is required"],
+    trim: true,
+  },
   referralCode: { type: String, default: null },
   isVerified: { type: Boolean, default: false },
   verificationToken: { type: String, default: null },
