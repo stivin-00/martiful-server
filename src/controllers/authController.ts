@@ -65,9 +65,6 @@ export const loginUser = async (
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      console.log("Entered Password:", password);
-      console.log("Stored Password Hash:", user.password);
-      console.log("Generated Password Hash:", await bcrypt.hash(password, 10)); // Hash the entered password for comparison
       return res.status(401).json({ message: "Invalid password" });
     }
 
