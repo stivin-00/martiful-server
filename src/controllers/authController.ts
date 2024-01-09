@@ -21,10 +21,19 @@ export const registerUser = async (
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res
-        .status(409)
-        .json({ message: "User already exists with this email" });
+      if (existingUser.isVerified) {
+        return res
+          .status(409)
+          .json({ message: "User already exists with this email" });
+      } else {
+        sendVerificationEmail(existingUser);
+        return res
+          .status(201)
+          .json({ message: "A verification code has been sent to your email" });
+      }
     }
+    
+    
 
     const newUser = new User(loginInfo);
     await newUser.save();
