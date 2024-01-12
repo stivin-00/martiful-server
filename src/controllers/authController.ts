@@ -8,7 +8,11 @@ import User from "../models/user";
 import nodemailer from "nodemailer";
 import { UserDocument } from "../types/user";
 import AuthRequest from "../types/request";
-import { mailTransporter, verifyEmailTemplate, welcomeEmailTemplate } from "../utils/email/email";
+import {
+  mailTransporter,
+  verifyEmailTemplate,
+  welcomeEmailTemplate,
+} from "../utils/email/email";
 
 export const registerUser = async (
   req: AuthRequest<Partial<UserDocument>>,
@@ -32,8 +36,6 @@ export const registerUser = async (
           .json({ message: "A verification code has been sent to your email" });
       }
     }
-    
-    
 
     const newUser = new User(loginInfo);
     await newUser.save();
@@ -67,7 +69,9 @@ export const loginUser = async (
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(401).json({ message: "User not found, please register" });
+      return res
+        .status(401)
+        .json({ message: "User not found, please register" });
     }
 
     // Check if the password is correct
@@ -90,7 +94,9 @@ export const loginUser = async (
       expiresIn: "1h",
     });
 
-    res.status(200).json({...user, token, message: "Login successful"});
+    console.log(user);
+
+    res.status(200).json({ user, token, message: "Login successful" });
   } catch (error: any) {
     console.error("Error logging in:", error);
     res.status(500).json({ message: error.message });
@@ -139,7 +145,7 @@ export const updateAccount = async (
   try {
     const updates = req.body;
 
-    const { userId } = updates._id;
+    const userId = req.user._id;
 
     const user = await User.findById(userId);
 
@@ -165,7 +171,7 @@ export const changePassword = async (
 ) => {
   try {
     const { oldPassword, newPassword } = req.body;
-    const { userId } = req.user!; // Assuming the user object is attached by the middleware
+    const userId = req.user._id;
 
     if (
       oldPassword === undefined ||
@@ -268,15 +274,32 @@ export const resetPassword = async (
 };
 
 export const deleteAccount = async (
-  req: AuthRequest<Partial<UserDocument>>,
+  req: AuthRequest<Partial<{ oldPassword: string }>>,
   res: Response
 ) => {
   try {
-    const { userId } = req.body._id; // Assuming the user object is attached by the middleware
+    const userId = req.user._id;
+    const { oldPassword } = req.body;
 
-    const user = await User.findByIdAndDelete(userId);
+    if (!oldPassword) {
+      return res.status(400).json({ message: "Password is required" });
+    }
 
+    const user = await User.findById(userId);
     if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Compare the old password
+    const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
+
+    if (!isPasswordMatch) {
+      return res.status(401).json({ message: "Incorrect password" });
+    }
+
+    const deletedUser = await User.findByIdAndDelete(userId);
+
+    if (!deletedUser) {
       return res.status(404).json({ message: "User not found" });
     }
 
@@ -286,6 +309,8 @@ export const deleteAccount = async (
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+// email s helper functions
 
 // emails herer //
 
@@ -312,7 +337,6 @@ async function sendVerificationEmail(user: UserDocument): Promise<void> {
     console.error("Error sending verification email:", error);
   }
 }
-
 
 async function sendWelcomeEmail(user: UserDocument): Promise<void> {
   let mailDetails = {

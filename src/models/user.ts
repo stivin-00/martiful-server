@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import { UserDocument } from "../types/user"; // Import the UserDocument type
 
 const userSchema = new Schema({
+  avatar: { type: String, default: "default.png" },
   firstName: { type: String, required: [true, "FirstName is required"] },
   lastName: { type: String, required: [true, "LastName is required"] },
   userName: {

@@ -5,7 +5,7 @@ import { UserDocument } from './user';
 
 
 interface AuthRequest<T> extends Request {
-  user?: UserDocument;
+  user?: any;
   body: T;
 }
 

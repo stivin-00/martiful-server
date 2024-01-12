@@ -15,6 +15,7 @@ export const authenticateUser = async (
   next: NextFunction
 ): Promise<any> => {
   try {
+    // Get the token from the request header
     const token = req.header("Authorization")?.replace("Bearer ", "");
 
     if (!token) {
