@@ -41,14 +41,5 @@ export const UploadFile = async (req: Request, res: Response) => {
     res.status(500).json({ message: error.message });
   }
 
-  // save new image
-  // let result = await cloudinary.uploader.upload(req.body.image, {
-  // public_id: `${Date.now()}`,
-  // resource_type: "auto", // jpeg, png
-  //   });
-  // if (result) {
-  //   return res.status(201).json({
-  //     result,
-  //   });
-  // }
+
 };
