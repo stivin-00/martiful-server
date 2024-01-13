@@ -22,7 +22,7 @@ export const UploadFile = async (req: Request, res: Response) => {
     }
 
     // save new image
-    let result = await cloudinary.uploader.upload_large(req.body.image, {
+    let result = await cloudinary.uploader.upload(req.body.image, {
       public_id: `${Date.now()}`,
       resource_type: "auto", // jpeg, png
     });
