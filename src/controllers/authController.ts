@@ -5,7 +5,6 @@ import bcrypt from "bcrypt";
 import { randomBytes } from "crypto";
 import jwt from "jsonwebtoken";
 import User from "../models/user";
-import nodemailer from "nodemailer";
 import { UserDocument } from "../types/user";
 import AuthRequest from "../types/request";
 import {
@@ -94,8 +93,6 @@ export const loginUser = async (
       expiresIn: "1h",
     });
 
-    console.log(user);
-
     res.status(200).json({ user, token, message: "Login successful" });
   } catch (error: any) {
     console.error("Error logging in:", error);
@@ -158,7 +155,14 @@ export const updateAccount = async (
 
     await user.save();
 
-    res.status(200).json({ message: "Account updated successfully" });
+    // Generate and sign a JWT token
+    const token = jwt.sign({ userId: user._id }, "your-secret-key", {
+      expiresIn: "1h",
+    });
+
+    res
+      .status(200)
+      .json({ user, token, message: "Account updated successfully" });
   } catch (error) {
     console.error("Error updating account:", error);
     res.status(500).json({ message: "Internal server error" });

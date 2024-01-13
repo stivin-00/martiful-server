@@ -6,6 +6,7 @@ import helmet from "helmet";
 import bodyParser from "body-parser";
 import { connectToDatabase } from "./utils/database"; // Assuming you have a utility function for database connection
 import authRouter from "./routes/authRoutes";
+import uploadRouter from "./routes/uploadRouter";
 const uri =
 "mongodb+srv://stivin:vivian2436@martiful.cmoufbr.mongodb.net/?retryWrites=true&w=majority";
 
@@ -30,6 +31,7 @@ app.get("/api/", (req, res) => {
     `);
 });
 app.use("/api/auth", authRouter);
+app.use("/api/upload", uploadRouter);
 
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
