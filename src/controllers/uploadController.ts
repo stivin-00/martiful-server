@@ -28,8 +28,7 @@ export const UploadFile = async (req: Request, res: Response) => {
     });
     if (result) {
       return res.status(201).json({
-        public_id: result.public_id,
-        url: result.secure_url,
+        result,
       });
     }
   } catch (error: any) {
