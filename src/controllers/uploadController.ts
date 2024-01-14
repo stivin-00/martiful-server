@@ -25,7 +25,7 @@ export const UploadFile = async (req: Request, res: Response) => {
       req.body.image,
       {
         public_id: `${Date.now()}`,
-        resource_type: "auto", // jpeg, png
+        resource_type: "auto", // jpeg, png 
       },
       (error, result) => {
         if (result) {
@@ -40,6 +40,4 @@ export const UploadFile = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
-
-
 };
