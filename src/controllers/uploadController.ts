@@ -9,6 +9,7 @@ cloudinary.config({
 
 export const UploadFile = async (req: Request, res: Response) => {
   let image_id = req.body.id;
+  console.log(req.body.image);
   // remove previous image
   if (image_id) {
     cloudinary.uploader.destroy(image_id, (err: any, result: any) => {
@@ -25,7 +26,7 @@ export const UploadFile = async (req: Request, res: Response) => {
       req.body.image,
       {
         public_id: `${Date.now()}`,
-        resource_type: "auto", // jpeg, png 
+        resource_type: "auto", // jpeg, png
       },
       (error, result) => {
         if (result) {

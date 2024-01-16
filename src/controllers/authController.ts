@@ -10,6 +10,7 @@ import AuthRequest from "../types/request";
 import {
   mailTransporter,
   verifyEmailTemplate,
+  verifyResetPasswordEmailTemplate,
   welcomeEmailTemplate,
 } from "../utils/email/email";
 
@@ -228,13 +229,18 @@ export const forgotPassword = async (
     }
 
     // Generate a password reset token
-    const resetToken = randomBytes(32).toString("hex");
+    const min = Math.pow(10, 4 - 1);
+    const max = Math.pow(10, 4) - 1;
+    const token = Math.floor(Math.random() * (max - min + 1)) + min;
+    const resetToken = token.toString();
     user.resetPasswordToken = resetToken;
     user.resetPasswordExpires = (Date.now() + 3600000).toString(); // Token expires in 1 hour
 
     await user.save();
 
     // TODO: Send a password reset email with resetToken to the user
+    await sendPasswordResetEmail(user); 
+  
 
     res.status(200).json({ message: "Password reset email sent successfully" });
   } catch (error) {
@@ -314,7 +320,7 @@ export const deleteAccount = async (
   }
 };
 
-// email s helper functions
+// routes end here
 
 // emails herer //
 
@@ -362,5 +368,32 @@ async function sendWelcomeEmail(user: UserDocument): Promise<void> {
     });
   } catch (error) {
     console.error("Error sending welcome email:", error);
+  }
+}
+
+async function sendPasswordResetEmail(user: UserDocument): Promise<void> {
+  let mailDetails = {
+    from: {
+      name: "Martiful Services",
+      address: "NonReply@Martiful.com",
+    },
+    to: user.email,
+    subject: "PASSWORD RESET TOKEN",
+    html:
+      verifyResetPasswordEmailTemplate(
+        user.firstName,
+        user.resetPasswordToken
+      ) || undefined,
+  };
+  try {
+    await mailTransporter.sendMail(mailDetails, function (err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(data);
+      }
+    });
+  } catch (error) {
+    console.error("Error sending verification email:", error);
   }
 }
