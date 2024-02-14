@@ -10,8 +10,10 @@ import { authenticateAdmin } from "../middlewares/authMiddleware";
 
 const adminRouter = express.Router();
 
-adminRouter.post("/create", authenticateAdmin, createAdmin);
+console.log("Admin routes are being initialized");
+
+adminRouter.post("/create", createAdmin);
 adminRouter.post("/login", requestAdminLogin);
-adminRouter.post("/login/verify", verifyAdminLogin);
+adminRouter.post("/verify-login", verifyAdminLogin);
 
 export default adminRouter;

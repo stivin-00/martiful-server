@@ -7,5 +7,5 @@ export interface AdminDocument extends Document {
   email: string;
   password: string;
   role: "admin" | "superadmin";
-  verificationCode: string;
+  verificationToken: string;
 }

@@ -2,6 +2,7 @@
 
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
+import { randomBytes } from "crypto";
 import Admin from "../models/admin";
 import { AdminDocument } from "../types/admin";
 import { generateToken } from "../utils/tokenUtils";
@@ -20,24 +21,19 @@ export const createAdmin = async (
       return res.status(403).json({ message: "Permission denied" });
     }
 
-    // Hash the password
-    const saltRounds = 10;
-    if (password) {
-      const hashedPassword = await bcrypt.hash(password, saltRounds);
-      // Rest of the code
-      // Create the admin
+    if (email) {
       const newAdmin: AdminDocument = new Admin({
         username,
         email,
-        password: hashedPassword,
         role,
+        password,
       });
       await newAdmin.save();
 
       res.status(201).json({ message: "Admin created successfully" });
     } else {
       // Handle the case where password is undefined
-      res.status(400).json({ message: "Password is required" });
+      res.status(400).json({ message: "email is required" });
     }
   } catch (error) {
     console.error("Error creating admin:", error);
@@ -49,9 +45,16 @@ export const requestAdminLogin = async (
   req: AuthRequest<Partial<AdminDocument>>,
   res: Response
 ) => {
-  console.log("started admin");
   try {
-    const { email } = req.body;
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Please provide both email and password" });
+    }
+
+    // Find the admin by email
     const admin = await Admin.findOne({ email });
 
     if (!admin) {
@@ -59,13 +62,23 @@ export const requestAdminLogin = async (
       return res.status(401).json({ message: "Admin not found" });
     }
 
-    // Generate a 6-digit verification code
-    const verificationCode = Math.floor(
-      100000 + Math.random() * 900000
-    ).toString();
+    // Check if the password is correct
+    const isPasswordValid = await bcrypt.compare(password, admin.password);
 
-    // Save the verification code to the admin document
-    admin.verificationCode = verificationCode;
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
+
+    // Generate a verification code
+    const generateVerificationCode = (): string => {
+      const codeLength = 6;
+      const buffer = randomBytes(codeLength);
+      const verificationCode = buffer.toString("hex").slice(0, codeLength);
+      return verificationCode;
+    };
+
+    // save the verification code
+    admin.verificationToken = generateVerificationCode();
     await admin.save();
 
     // Send the verification code to the admin's email
@@ -83,17 +96,23 @@ export const verifyAdminLogin = async (
   res: Response
 ): Promise<any> => {
   try {
-    const { email, verificationCode } = req.body;
-    const admin = await Admin.findOne({ email, verificationCode });
+    const { email, verificationToken } = req.body;
+    const admin = await Admin.findOne({ email, verificationToken });
 
     if (!admin) {
       return res.status(401).json({ message: "Invalid verification code" });
     }
 
+    // clear the verification token
+    admin.verificationToken = "";
+    await admin.save();
+
     // Generate a JWT token for the admin
     const token = generateToken({ email: admin.email, role: admin.role });
 
-    res.status(200).json({ token });
+    res
+      .status(200)
+      .json({ admin, token, message: "Admin logged in successfully" });
   } catch (error) {
     console.error("Error verifying admin login:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -115,7 +134,7 @@ async function sendVerificationEmail(admin: AdminDocument): Promise<void> {
     html: `
       <h5>Hi Admin</h5>
       <p>Please use the password below to login</p>
-<P>${admin.verificationCode}</P>
+<P>${admin.verificationToken}</P>
       `,
   };
   try {
