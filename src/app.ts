@@ -7,8 +7,9 @@ import bodyParser from "body-parser";
 import { connectToDatabase } from "./utils/database"; // Assuming you have a utility function for database connection
 import authRouter from "./routes/authRoutes";
 import uploadRouter from "./routes/uploadRouter";
+import adminRouter from "./routes/adminRoutes";
 const uri =
-"mongodb+srv://stivin:vivian2436@martiful.cmoufbr.mongodb.net/?retryWrites=true&w=majority";
+  "mongodb+srv://stivin:vivian2436@martiful.cmoufbr.mongodb.net/?retryWrites=true&w=majority";
 
 const app: Application = express();
 
@@ -30,6 +31,7 @@ app.get("/api/", (req, res) => {
     
     `);
 });
+app.use("api/admin", adminRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/upload", uploadRouter);
 

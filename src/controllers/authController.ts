@@ -56,6 +56,7 @@ export const loginUser = async (
   req: AuthRequest<Partial<UserDocument>>,
   res: Response
 ) => {
+  console.log("started");
   try {
     const { email, password } = req.body;
 
@@ -239,8 +240,7 @@ export const forgotPassword = async (
     await user.save();
 
     // TODO: Send a password reset email with resetToken to the user
-    await sendPasswordResetEmail(user); 
-  
+    await sendPasswordResetEmail(user);
 
     res.status(200).json({ message: "Password reset email sent successfully" });
   } catch (error) {
