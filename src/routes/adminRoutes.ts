@@ -1,4 +1,4 @@
-// routes/adminRoutes.ts
+// routes/adminRoutes.ts //
 
 import express from "express";
 import {
