@@ -8,6 +8,7 @@ import authRouter from "./routes/authRoutes";
 import uploadRouter from "./routes/uploadRouter";
 import adminRouter from "./routes/adminRoutes";
 import { requestAdminLogin, verifyAdminLogin } from "./controllers/adminController";
+import assetRouter from "./routes/assetRotes";
 const uri =
   "mongodb+srv://stivin:vivian2436@martiful.cmoufbr.mongodb.net/?retryWrites=true&w=majority";
 
@@ -35,6 +36,7 @@ app.get("/api/", (req, res) => {
 app.use("/api/admin", adminRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/upload", uploadRouter);
+app.use("/api/asset", assetRouter)
 
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
