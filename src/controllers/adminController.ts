@@ -8,6 +8,7 @@ import { AdminDocument } from "../types/admin";
 import { generateToken } from "../utils/tokenUtils";
 import AuthRequest from "../types/request";
 import { mailTransporter } from "../utils/email/email";
+import User from "../models/user";
 
 export const createAdmin = async (
   req: AuthRequest<Partial<AdminDocument>>,
@@ -115,6 +116,20 @@ export const verifyAdminLogin = async (
       .json({ admin, token, message: "Admin logged in successfully" });
   } catch (error) {
     console.error("Error verifying admin login:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getUsers = async (
+  req: AuthRequest<Partial<AdminDocument>>,
+  res: Response
+): Promise<any> => {
+  try {
+    const users = await User.find().select("-password");
+
+    res.status(200).json({ users, message: "Users fetched successfully" });
+  } catch (error) {
+    console.error("Error fetching users:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

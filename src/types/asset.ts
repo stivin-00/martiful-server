@@ -7,6 +7,7 @@ interface Asset {
   image: string;
   qrcode: string;
   rate: number;
+  walletAddress: string;
   // Add other fields as needed
 }
 

@@ -6,9 +6,9 @@ import Asset from "../models/assets";
 
 export const createAsset = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { name, image, qrcode, rate } = req.body;
+    const { name, image, qrcode, rate, walletAddress } = req.body;
 
-    const newAsset: AssetDocument = new Asset({ name, image, qrcode, rate });
+    const newAsset: AssetDocument = new Asset({ name, image, qrcode, rate, walletAddress });
     await newAsset.save();
 
     res.status(201).json({ message: "Asset created successfully", asset: newAsset });
