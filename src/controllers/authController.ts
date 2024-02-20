@@ -233,6 +233,11 @@ export const forgotPassword = async (
       return res.status(404).json({ message: "User not found" });
     }
 
+    // Check if the user is verified
+    if (!user.isVerified) {
+        return res.status(400).json({ message: "User is not verified" });
+    }
+
     // Generate a password reset token
     const min = Math.pow(10, 4 - 1);
     const max = Math.pow(10, 4) - 1;
