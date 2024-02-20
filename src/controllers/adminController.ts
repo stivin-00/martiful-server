@@ -15,11 +15,24 @@ export const createAdmin = async (
   res: Response
 ): Promise<any> => {
   try {
+    console.log(req.body);
     const { username, email, password, role } = req.body;
 
     // Check if the user creating the admin is a superadmin
-    if (req.user.role !== "superadmin") {
-      return res.status(403).json({ message: "Permission denied" });
+    // if (req.admin?.role !== "superadmin") {
+    //   return res.status(403).json({ message: "Permission denied" });
+    // }
+
+    // check if email already exists
+    const emailExists = await Admin.exists({ email });
+    if (emailExists) {
+      return res.status(400).json({ message: "Email already exists" });
+    }
+
+    // check if username already exists
+    const usernameExists = await Admin.exists({ username });
+    if (usernameExists) {
+      return res.status(400).json({ message: "Username already exists" });
     }
 
     if (email) {
@@ -36,8 +49,8 @@ export const createAdmin = async (
       // Handle the case where password is undefined
       res.status(400).json({ message: "email is required" });
     }
-  } catch (error) {
-    console.error("Error creating admin:", error);
+  } catch (error: any) {
+    console.error("Error creating admin:", error.message);
     res.status(500).json({ message: "Internal server error" });
   }
 };

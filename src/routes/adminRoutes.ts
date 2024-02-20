@@ -13,7 +13,7 @@ const adminRouter = express.Router();
 
 console.log("Admin routes are being initialized");
 
-adminRouter.post("/create", createAdmin);
+adminRouter.post("/create", authenticateAdmin, createAdmin);
 adminRouter.post("/login", requestAdminLogin);
 adminRouter.post("/verify-login", verifyAdminLogin);
 adminRouter.get("/users", getUsers);

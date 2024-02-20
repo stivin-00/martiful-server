@@ -13,7 +13,7 @@ const assetRouter = express.Router();
 
 assetRouter.post("/", authenticateAdmin, createAsset);
 assetRouter.get("/", getAllAssets);
-assetRouter.patch("/id", updateAsset);
-assetRouter.delete("/id", deleteAsset);
+assetRouter.patch("/:id", authenticateAdmin, updateAsset);
+assetRouter.delete("/:id", authenticateAdmin, deleteAsset);
 
 export default assetRouter;

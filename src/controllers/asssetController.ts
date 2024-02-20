@@ -32,10 +32,10 @@ export const getAllAssets = async (req: Request, res: Response): Promise<void> =
 export const updateAsset = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
-    const { name, image, qrcode, rate } = req.body;
+    const { name, image, qrcode, rate, walletAddress } = req.body;
     const updatedAsset = await Asset.findByIdAndUpdate(
       id,
-      { name, image, qrcode, rate },
+      { name, image, qrcode, rate, walletAddress  },
       { new: true }
     );
     res.status(200).json({ message: "Asset updated successfully", asset: updatedAsset });
