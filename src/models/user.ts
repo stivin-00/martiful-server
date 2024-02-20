@@ -4,6 +4,12 @@ import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
 import { UserDocument } from "../types/user"; // Import the UserDocument type
 
+const accountDetailsSchema = new Schema({
+  bankName: { type: String },
+  accountNumber: { type: String},
+  accountName: { type: String },
+});
+
 const userSchema = new Schema(
   {
     avatar: {
@@ -41,7 +47,9 @@ const userSchema = new Schema(
     verificationToken: { type: String, default: null },
     resetPasswordToken: { type: String, default: null },
     resetPasswordExpires: { type: String, default: null },
+    accountDetails: [accountDetailsSchema], // Array of account details
   },
+
   {
     timestamps: true,
   }

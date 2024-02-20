@@ -13,6 +13,7 @@ import {
   verifyResetPasswordEmailTemplate,
   welcomeEmailTemplate,
 } from "../utils/email/email";
+import { createWallet } from "./walletController";
 
 export const registerUser = async (
   req: AuthRequest<Partial<UserDocument>>,
@@ -126,6 +127,9 @@ export const verifyAccount = async (
     user.isVerified = true;
     user.verificationToken = "";
     await user.save();
+
+    // create wallet
+    await createWallet(user._id);
 
     // send welcome mail
     await sendWelcomeEmail(user);
@@ -316,6 +320,43 @@ export const deleteAccount = async (
     res.status(200).json({ message: "Account deleted successfully" });
   } catch (error) {
     console.error("Error deleting account:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const addAccountDetails = async (
+  req: AuthRequest<
+    Partial<{ bankName: string; accountNumber: string; accountName: string }>
+  >,
+  res: Response
+) => {
+  const { bankName, accountNumber, accountName } = req.body;
+  const userId = req.user._id; // Assuming you have authentication middleware that attaches the user to the request
+
+  try {
+    // Find the user by ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Save the user document with the updated account details
+    if (!bankName || !accountNumber || !accountName) {
+      return res.status(400).json({ message: "All fields are required" });
+    } else {
+      user.accountDetails.push({ bankName, accountNumber, accountName });
+
+      await user.save();
+
+      res
+        .status(200)
+        .json({ user, message: "Account details added successfully" });
+    }
+
+    // Add the new account details to the user's account
+  } catch (error) {
+    console.error("Error adding account details:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

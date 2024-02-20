@@ -1,6 +1,10 @@
-// types/user.ts
-
 import { Document } from "mongoose";
+
+interface AccountDetail {
+  bankName: string;
+  accountNumber: string;
+  accountName: string;
+}
 
 export interface UserDocument extends Document {
   userId: string;
@@ -14,4 +18,5 @@ export interface UserDocument extends Document {
   password: string;
   isVerified: boolean;
   verificationToken: string;
+  accountDetails: AccountDetail[];
 }

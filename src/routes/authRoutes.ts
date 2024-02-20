@@ -3,6 +3,7 @@
 import express from "express";
 import { authenticateUser } from "../middlewares/authMiddleware";
 import {
+  addAccountDetails,
   changePassword,
   deleteAccount,
   forgotPassword,
@@ -23,5 +24,6 @@ authRouter.patch("/resetPassword", resetPassword);
 authRouter.patch("/update", authenticateUser, updateAccount);
 authRouter.delete("/delete", authenticateUser, deleteAccount);
 authRouter.post("/change-password", authenticateUser, changePassword);
+authRouter.post("/add-bank", authenticateUser, addAccountDetails);
 
 export default authRouter;
