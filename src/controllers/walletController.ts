@@ -11,9 +11,6 @@ export const createWallet = async (userId: string): Promise<WalletDocument> => {
     const wallet = new Wallet({ user: userId, walletId });
     const createdWallet = await wallet.save();
 
-    // Log the wallet creation as a transaction
-    await logTransaction(createdWallet._id, 0, "wallet_creation");
-
     return createdWallet;
   } catch (error) {
     console.error("Error creating wallet:", error);
@@ -21,7 +18,9 @@ export const createWallet = async (userId: string): Promise<WalletDocument> => {
   }
 };
 
-export const getWallet = async (userId: string): Promise<WalletDocument | null> => {
+export const getWallet = async (
+  userId: string
+): Promise<WalletDocument | null> => {
   try {
     return await Wallet.findOne({ user: userId });
   } catch (error) {
@@ -30,7 +29,10 @@ export const getWallet = async (userId: string): Promise<WalletDocument | null> 
   }
 };
 
-export const deposit = async (userId: string, amount: number): Promise<WalletDocument | null> => {
+export const deposit = async (
+  userId: string,
+  amount: number
+): Promise<WalletDocument | null> => {
   try {
     const wallet = await Wallet.findOneAndUpdate(
       { user: userId },
@@ -48,7 +50,10 @@ export const deposit = async (userId: string, amount: number): Promise<WalletDoc
   }
 };
 
-export const withdraw = async (userId: string, amount: number): Promise<WalletDocument | null> => {
+export const withdraw = async (
+  userId: string,
+  amount: number
+): Promise<WalletDocument | null> => {
   try {
     const wallet = await Wallet.findOneAndUpdate(
       { user: userId, balance: { $gte: amount } },
@@ -69,7 +74,7 @@ export const withdraw = async (userId: string, amount: number): Promise<WalletDo
 const logTransaction = async (
   walletId: string | undefined,
   amount: number,
-  type: "deposit" | "withdrawal" | "wallet_creation"
+  type: "deposit" | "withdrawal"
 ): Promise<void> => {
   try {
     if (walletId) {
