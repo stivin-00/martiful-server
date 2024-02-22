@@ -9,6 +9,8 @@ import { generateToken } from "../utils/tokenUtils";
 import AuthRequest from "../types/request";
 import { mailTransporter } from "../utils/email/email";
 import User from "../models/user";
+import Transaction from "../models/transaction";
+import Wallet from "../models/wallet";
 
 export const createAdmin = async (
   req: AuthRequest<Partial<AdminDocument>>,
@@ -143,6 +145,132 @@ export const getUsers = async (
     res.status(200).json({ users, message: "Users fetched successfully" });
   } catch (error) {
     console.error("Error fetching users:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// get all transactions
+// Update your getAllTransactions controller
+export const getAllTransactions = async (
+  req: AuthRequest<Partial<AdminDocument>>,
+  res: Response
+): Promise<any> => {
+  try {
+    const transactions = await Transaction.find()
+      .populate({
+        path: 'user',
+        model: 'User',
+        select: 'username email phoneNumber', // Specify the fields you want to include
+      })
+
+    res.status(200).json({ transactions, message: 'Transactions fetched successfully' });
+  } catch (error) {
+    console.error('Error fetching transactions:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+export const approveDepositeTransaction = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  const { transactionId } = req.params;
+
+  try {
+    // Find the transaction
+    const transaction = await Transaction.findById(transactionId);
+
+    if (!transaction) {
+      return res.status(404).json({ message: "Transaction not found" });
+    }
+
+    // find and update user wallet
+    const wallet = await Wallet.findByIdAndUpdate(
+      transaction.wallet,
+      { $inc: { balance: transaction.amount } },
+      { new: true }
+    );
+
+    // update transaction status
+    transaction.status = "approved";
+    await transaction.save();
+
+    res.status(200).json({
+      transaction,
+      wallet,
+      message: "Transaction approved successfully",
+    });
+  } catch (error) {
+    console.error("Error approving transaction:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const approveWithdrawTransaction = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  const { transactionId } = req.params;
+
+  try {
+    // Find the transaction
+    const transaction = await Transaction.findById(transactionId);
+
+    if (!transaction) {
+      return res.status(404).json({ message: "Transaction not found" });
+    }
+
+    // find and update user wallet
+    const wallet = await Wallet.findOne({
+      walletId: transaction.wallet,
+    });
+
+    // update wallet balance if balance is greater than amount
+    if (wallet && wallet.balance > transaction.amount) {
+      wallet.balance -= transaction.amount;
+      await wallet.save();
+    } else {
+      return res.status(400).json({ message: "Insufficient balance" });
+    }
+
+    // update transaction status
+    transaction.status = "approved";
+    await transaction.save();
+
+    res.status(200).json({
+      transaction,
+      wallet,
+      message: "Transaction approved successfully",
+    });
+  } catch (error) {
+    console.error("Error approving transaction:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const rejectTransaction = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  const { transactionId } = req.params;
+
+  try {
+    const transaction = await Transaction.findById(transactionId);
+
+    if (!transaction) {
+      return res.status(404).json({ message: "Transaction not found" });
+    }
+
+    // update transaction status
+    transaction.status = "rejected";
+    await transaction.save();
+
+    res
+      .status(200)
+      .json({ transaction, message: "Transaction rejected successfully" });
+  } catch (error) {
+    console.error("Error rejecting transaction:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

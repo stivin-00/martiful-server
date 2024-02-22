@@ -31,17 +31,19 @@ export const getWallet = async (
 
 export const deposit = async (
   userId: string,
-  amount: number
+  amount: number,
+  image: string,
+  coin: string,
+  coinQty: number,
+  amountInUSD: number,
+  ourWalletAddress: string,
+  yourWalletAddress: string
 ): Promise<WalletDocument | null> => {
   try {
-    const wallet = await Wallet.findOneAndUpdate(
-      { user: userId },
-      { $inc: { balance: amount } },
-      { new: true }
-    );
+    const wallet = await Wallet.findOne({ user: userId });
 
     // Log the deposit as a transaction
-    await logTransaction(wallet?._id, amount, "deposit");
+    await logDepositTransaction(userId, wallet?._id, amount, image, "deposit", "pending", coin, coinQty, amountInUSD, ourWalletAddress, yourWalletAddress, "");
 
     return wallet;
   } catch (error) {
@@ -52,17 +54,16 @@ export const deposit = async (
 
 export const withdraw = async (
   userId: string,
-  amount: number
+  amount: number,
+  bankName: string,
+  accountNumber: string,
+  accountName: string,
 ): Promise<WalletDocument | null> => {
   try {
-    const wallet = await Wallet.findOneAndUpdate(
-      { user: userId, balance: { $gte: amount } },
-      { $inc: { balance: -amount } },
-      { new: true }
-    );
+    const wallet = await Wallet.findOne({ user: userId });
 
     // Log the withdrawal as a transaction
-    await logTransaction(wallet?._id, amount, "withdrawal");
+    await logWithdrawTransaction(userId, wallet?._id, amount, "withdrawal", "pending", bankName, accountNumber, accountName, "");
 
     return wallet;
   } catch (error) {
@@ -71,14 +72,23 @@ export const withdraw = async (
   }
 };
 
-const logTransaction = async (
+const logDepositTransaction = async (
+  user : string | undefined,
   walletId: string | undefined,
   amount: number,
-  type: "deposit" | "withdrawal"
+  image: string,
+  type: "deposit" | "withdrawal",
+  status: "pending" | "approved" | "rejected",
+  coin: string,
+  coinQty: number,
+  amountInUSD: number,
+  ourWalletAddress: string,
+  yourWalletAddress: string,
+  message: string
 ): Promise<void> => {
   try {
     if (walletId) {
-      const transaction = new Transaction({ wallet: walletId, amount, type });
+      const transaction = new Transaction({ user, wallet: walletId, amount, image, type, status, coin, coinQty, amountInUSD, ourWalletAddress, yourWalletAddress, message });
       await transaction.save();
     }
   } catch (error) {
@@ -87,8 +97,36 @@ const logTransaction = async (
   }
 };
 
+
+const logWithdrawTransaction = async (
+  user: string | undefined,
+  walletId: string | undefined,
+  amount: number,
+  type: "deposit" | "withdrawal",
+  status: "pending" | "approved" | "rejected",
+  bankName: string,
+  accountNumber: string,
+  accountName: string,
+  message: string
+): Promise<void> => {
+  try {
+    if (walletId) {
+      const transaction = new Transaction({ user, wallet: walletId, amount, type, status, bankName, accountNumber, accountName, message });
+      await transaction.save();
+    }
+  } catch (error) {
+    console.error("Error logging transaction:", error);
+    throw error;
+  }
+};
+// 
+
+
+
+
+
+// 
 const generateWalletId = (): string => {
-  // Implement your logic for generating a unique wallet ID (e.g., using a library like uuid)
-  // For simplicity, this example uses a random string; replace it with your actual logic
-  return Math.random().toString(36).substring(7);
+  const randomNumbers = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+  return `0mar${randomNumbers}`;
 };
