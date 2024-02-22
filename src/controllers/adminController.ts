@@ -156,20 +156,20 @@ export const getAllTransactions = async (
   res: Response
 ): Promise<any> => {
   try {
-    const transactions = await Transaction.find()
-      .populate({
-        path: 'user',
-        model: 'User',
-        select: 'username email phoneNumber', // Specify the fields you want to include
-      })
+    const transactions = await Transaction.find().populate({
+      path: "user",
+      model: "User",
+      select: "firstName lastName userName email phoneNumber", // Specify the fields you want to include
+    });
 
-    res.status(200).json({ transactions, message: 'Transactions fetched successfully' });
+    res
+      .status(200)
+      .json({ transactions, message: "Transactions fetched successfully" });
   } catch (error) {
-    console.error('Error fetching transactions:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error("Error fetching transactions:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 export const approveDepositeTransaction = async (
   req: Request,
