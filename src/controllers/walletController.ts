@@ -4,6 +4,12 @@ import { Request, Response } from "express";
 import Wallet from "../models/wallet";
 import Transaction from "../models/transaction";
 import { WalletDocument } from "../types/wallet";
+import User from "../models/user";
+import { mailTransporter } from "../utils/email/email";
+import {
+  receivedDepositEmail,
+  receivedWithdrawalEmail,
+} from "../utils/email/recieived-emails";
 
 export const createWallet = async (userId: string): Promise<WalletDocument> => {
   try {
@@ -43,7 +49,20 @@ export const deposit = async (
     const wallet = await Wallet.findOne({ user: userId });
 
     // Log the deposit as a transaction
-    await logDepositTransaction(userId, wallet?._id, amount, image, "deposit", "pending", coin, coinQty, amountInUSD, ourWalletAddress, yourWalletAddress, "");
+    await logDepositTransaction(
+      userId,
+      wallet?._id,
+      amount,
+      image,
+      "deposit",
+      "pending",
+      coin,
+      coinQty,
+      amountInUSD,
+      ourWalletAddress,
+      yourWalletAddress,
+      ""
+    );
 
     return wallet;
   } catch (error) {
@@ -57,13 +76,23 @@ export const withdraw = async (
   amount: number,
   bankName: string,
   accountNumber: string,
-  accountName: string,
+  accountName: string
 ): Promise<WalletDocument | null> => {
   try {
     const wallet = await Wallet.findOne({ user: userId });
 
     // Log the withdrawal as a transaction
-    await logWithdrawTransaction(userId, wallet?._id, amount, "withdrawal", "pending", bankName, accountNumber, accountName, "");
+    await logWithdrawTransaction(
+      userId,
+      wallet?._id,
+      amount,
+      "withdrawal",
+      "pending",
+      bankName,
+      accountNumber,
+      accountName,
+      ""
+    );
 
     return wallet;
   } catch (error) {
@@ -73,7 +102,7 @@ export const withdraw = async (
 };
 
 const logDepositTransaction = async (
-  user : string | undefined,
+  user: string | undefined,
   walletId: string | undefined,
   amount: number,
   image: string,
@@ -88,15 +117,36 @@ const logDepositTransaction = async (
 ): Promise<void> => {
   try {
     if (walletId) {
-      const transaction = new Transaction({ user, wallet: walletId, amount, image, type, status, coin, coinQty, amountInUSD, ourWalletAddress, yourWalletAddress, message });
+      const transaction = new Transaction({
+        user,
+        wallet: walletId,
+        amount,
+        image,
+        type,
+        status,
+        coin,
+        coinQty,
+        amountInUSD,
+        ourWalletAddress,
+        yourWalletAddress,
+        message,
+      });
       await transaction.save();
+
+      // send received email to user
+      const customer = await User.findById(user);
+      const data = {
+        name: customer?.firstName + " " + customer?.lastName,
+        email: customer?.email,
+        ...transaction,
+      };
+      await sendDepositReceivedEmail(data);
     }
   } catch (error) {
     console.error("Error logging transaction:", error);
     throw error;
   }
 };
-
 
 const logWithdrawTransaction = async (
   user: string | undefined,
@@ -111,22 +161,88 @@ const logWithdrawTransaction = async (
 ): Promise<void> => {
   try {
     if (walletId) {
-      const transaction = new Transaction({ user, wallet: walletId, amount, type, status, bankName, accountNumber, accountName, message });
+      const transaction = new Transaction({
+        user,
+        wallet: walletId,
+        amount,
+        type,
+        status,
+        bankName,
+        accountNumber,
+        accountName,
+        message,
+      });
       await transaction.save();
+
+      // send received email to user
+      const customer = await User.findById(user);
+      const data = {
+        name: customer?.firstName + " " + customer?.lastName,
+        email: customer?.email,
+        ...transaction,
+      };
+      await sendWithdrawReceivedEmail(data);
     }
   } catch (error) {
     console.error("Error logging transaction:", error);
     throw error;
   }
 };
-// 
+//
 
-
-
-
-
-// 
+//
 const generateWalletId = (): string => {
-  const randomNumbers = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+  const randomNumbers = Math.floor(Math.random() * 1000000)
+    .toString()
+    .padStart(6, "0");
   return `0mar${randomNumbers}`;
 };
+//
+
+// send email to user
+async function sendWithdrawReceivedEmail(data: any): Promise<void> {
+  let mailDetails = {
+    from: {
+      name: "Martiful",
+      address: "NonReply@Martiful.com",
+    },
+    to: data.email,
+    subject: "Transaction Received",
+    html: receivedWithdrawalEmail(data),
+  };
+  try {
+    await mailTransporter.sendMail(mailDetails, function (err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(data);
+      }
+    });
+  } catch (error) {
+    console.error("Error sending approval email:", error);
+  }
+}
+
+// send email to user
+async function sendDepositReceivedEmail(data: any): Promise<void> {
+  let mailDetails = {
+    from: {
+      name: "Martiful",
+      address: "NonReply@Martiful.com",
+    },
+    to: data.email,
+    subject: "Transaction Received",
+    html: receivedDepositEmail(data),
+  };
+  try {
+    await mailTransporter.sendMail(mailDetails, function (err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(data);
+      }
+    });
+  } catch (error) {
+    console.error("Error sending approval email:", error);
+  }
+}

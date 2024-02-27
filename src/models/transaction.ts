@@ -19,6 +19,8 @@ export interface TransactionDocument extends mongoose.Document {
   amountInUSD: number;
   ourWalletAddress: string;
   yourWalletAddress: string;
+  rate: number;
+  message: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -30,7 +32,11 @@ const transactionSchema = new Schema(
     amount: { type: Number, required: true },
     image: { type: String, required: false },
     type: { type: String, enum: ["deposit", "withdrawal"], required: true },
-    status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
+    status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
+    },
     coin: { type: String, required: false },
     coinQty: { type: Number, required: false },
     bankName: { type: String, required: false },
@@ -39,6 +45,7 @@ const transactionSchema = new Schema(
     amountInUSD: { type: Number, required: false },
     ourWalletAddress: { type: String, required: false },
     yourWalletAddress: { type: String, required: false },
+    rate: { type: Number, required: false },
     message: { type: String, required: false },
   },
   {
@@ -46,6 +53,9 @@ const transactionSchema = new Schema(
   }
 );
 
-const Transaction = mongoose.model<TransactionDocument>("Transaction", transactionSchema);
+const Transaction = mongoose.model<TransactionDocument>(
+  "Transaction",
+  transactionSchema
+);
 
 export default Transaction;

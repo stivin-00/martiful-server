@@ -11,6 +11,14 @@ import { mailTransporter } from "../utils/email/email";
 import User from "../models/user";
 import Transaction from "../models/transaction";
 import Wallet from "../models/wallet";
+import {
+  approvedDepositEmail,
+  approvedWithdrawalEmail,
+} from "../utils/email/approved-email";
+import {
+  declinedDepositEmail,
+  declinedWithdrawalEmail,
+} from "../utils/email/declined-email";
 
 export const createAdmin = async (
   req: AuthRequest<Partial<AdminDocument>>,
@@ -176,6 +184,7 @@ export const approveDepositeTransaction = async (
   res: Response
 ): Promise<any> => {
   const { transactionId } = req.params;
+  const newInfo = req.body;
 
   try {
     // Find the transaction
@@ -192,9 +201,17 @@ export const approveDepositeTransaction = async (
       { new: true }
     );
 
-    // update transaction status
-    transaction.status = "approved";
-    await transaction.save();
+    // Update the transaction fields based on req.body
+    Object.assign(transaction, newInfo);
+
+    // sendApprovalEmail(transaction, user);
+    const user = await User.findById(transaction.user);
+    const data = {
+      name: user?.firstName + " " + user?.lastName,
+      email: user?.email,
+      ...transaction,
+    };
+    await sendDepositApprovalEmail(data);
 
     res.status(200).json({
       transaction,
@@ -212,6 +229,7 @@ export const approveWithdrawTransaction = async (
   res: Response
 ): Promise<any> => {
   const { transactionId } = req.params;
+  const newInfo = req.body;
 
   try {
     // Find the transaction
@@ -234,9 +252,17 @@ export const approveWithdrawTransaction = async (
       return res.status(400).json({ message: "Insufficient balance" });
     }
 
-    // update transaction status
-    transaction.status = "approved";
-    await transaction.save();
+    // Update the transaction fields based on req.body
+    Object.assign(transaction, newInfo);
+
+    // sendApprovalEmail(transaction, user);
+    const user = await User.findById(transaction.user);
+    const data = {
+      name: user?.firstName + " " + user?.lastName,
+      email: user?.email,
+      ...transaction,
+    };
+    await sendWithdrawApprovalEmail(data);
 
     res.status(200).json({
       transaction,
@@ -254,6 +280,7 @@ export const rejectTransaction = async (
   res: Response
 ): Promise<any> => {
   const { transactionId } = req.params;
+  const newInfo = req.body;
 
   try {
     const transaction = await Transaction.findById(transactionId);
@@ -262,9 +289,27 @@ export const rejectTransaction = async (
       return res.status(404).json({ message: "Transaction not found" });
     }
 
-    // update transaction status
-    transaction.status = "rejected";
-    await transaction.save();
+    // Update the transaction fields based on req.body
+    Object.assign(transaction, newInfo);
+
+    // senddeclinedEmail(transaction, user);
+    if (transaction.type === "deposit") {
+      const user = await User.findById(transaction.user);
+      const data = {
+        name: user?.firstName + " " + user?.lastName,
+        email: user?.email,
+        ...transaction,
+      };
+      await sendDeclinedDepositEmail(data);
+    } else if (transaction.type === "withdrawal") {
+      const user = await User.findById(transaction.user);
+      const data = {
+        name: user?.firstName + " " + user?.lastName,
+        email: user?.email,
+        ...transaction,
+      };
+      await sendDeclinedWithdrawalEmail(data);
+    }
 
     res
       .status(200)
@@ -274,7 +319,6 @@ export const rejectTransaction = async (
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
 // routes ends here //
 
 // emails starts herer //
@@ -303,5 +347,97 @@ async function sendVerificationEmail(admin: AdminDocument): Promise<void> {
     });
   } catch (error) {
     console.error("Error sending verification email:", error);
+  }
+}
+
+async function sendDepositApprovalEmail(data: any): Promise<void> {
+  let mailDetails = {
+    from: {
+      name: "Martiful",
+      address: "NonReply@Martiful.com",
+    },
+    to: data.email,
+    subject: "Transaction Approval",
+    html: approvedDepositEmail(data),
+  };
+  try {
+    await mailTransporter.sendMail(mailDetails, function (err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(data);
+      }
+    });
+  } catch (error) {
+    console.error("Error sending approval email:", error);
+  }
+}
+
+async function sendWithdrawApprovalEmail(data: any): Promise<void> {
+  let mailDetails = {
+    from: {
+      name: "Martiful",
+      address: "NonReply@Martiful.com",
+    },
+    to: data.email,
+    subject: "Transaction Approval",
+    html: approvedWithdrawalEmail(data),
+  };
+  try {
+    await mailTransporter.sendMail(mailDetails, function (err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(data);
+      }
+    });
+  } catch (error) {
+    console.error("Error sending approval email:", error);
+  }
+}
+
+async function sendDeclinedDepositEmail(data: any): Promise<void> {
+  let mailDetails = {
+    from: {
+      name: "Martiful",
+      address: "NonReply@Martiful.com",
+    },
+    to: data.email,
+    subject: "Transaction Declined",
+    html: declinedDepositEmail(data),
+  };
+  try {
+    await mailTransporter.sendMail(mailDetails, function (err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(data);
+      }
+    });
+  } catch (error) {
+    console.error("Error sending approval email:", error);
+  }
+}
+
+async function sendDeclinedWithdrawalEmail(data: any): Promise<void> {
+  let mailDetails = {
+    from: {
+      name: "Martiful",
+      address: "NonReply@Martiful.com",
+    },
+    to: data.email,
+    subject: "Transaction Declined",
+    html: declinedWithdrawalEmail(data),
+  };
+  try {
+    await mailTransporter.sendMail(mailDetails, function (err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(data);
+      }
+    });
+  } catch (error) {
+    console.error("Error sending approval email:", error);
   }
 }
