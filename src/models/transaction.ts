@@ -34,7 +34,7 @@ const transactionSchema = new Schema(
     type: { type: String, enum: ["deposit", "withdrawal"], required: true },
     status: {
       type: String,
-      enum: ["pending", "approved", "rejected"],
+      enum: ["pending", "Approved", "rejected"],
       default: "pending",
     },
     coin: { type: String, required: false },

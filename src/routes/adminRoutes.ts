@@ -2,7 +2,7 @@
 
 import express from "express";
 import {
-  approveDepositeTransaction,
+  approveDepositTransaction,
   approveWithdrawTransaction,
   createAdmin,
   getAllTransactions,
@@ -21,17 +21,17 @@ adminRouter.post("/create", authenticateAdmin, createAdmin);
 adminRouter.post("/login", requestAdminLogin);
 adminRouter.post("/verify-login", verifyAdminLogin);
 adminRouter.get("/users", getUsers);
-adminRouter.post(
-  "/approve-deposite/:transactionId",
+adminRouter.patch(
+  "/approve-deposit/:transactionId",
   authenticateAdmin,
-  approveDepositeTransaction
+  approveDepositTransaction
 );
-adminRouter.post(
+adminRouter.patch(
   "/approve-withdrawal/:transactionId",
   authenticateAdmin,
   approveWithdrawTransaction
 );
-adminRouter.post(
+adminRouter.patch(
   "/reject-transaction/:transactionId",
   authenticateAdmin,
   rejectTransaction

@@ -9,7 +9,7 @@ import { generateToken } from "../utils/tokenUtils";
 import AuthRequest from "../types/request";
 import { mailTransporter } from "../utils/email/email";
 import User from "../models/user";
-import Transaction from "../models/transaction";
+import Transaction, { TransactionDocument } from "../models/transaction";
 import Wallet from "../models/wallet";
 import {
   approvedDepositEmail,
@@ -164,22 +164,25 @@ export const getAllTransactions = async (
   res: Response
 ): Promise<any> => {
   try {
-    const transactions = await Transaction.find().populate({
-      path: "user",
-      model: "User",
-      select: "firstName lastName userName email phoneNumber", // Specify the fields you want to include
-    });
+    const transactions = await Transaction.find()
+      .sort({ createdAt: -1 }) // Sort by createdAt in descending order (-1)
+      .populate({
+        path: "user",
+        model: "User",
+        select: "firstName lastName userName email phoneNumber",
+      });
 
-    res
-      .status(200)
-      .json({ transactions, message: "Transactions fetched successfully" });
+    res.status(200).json({
+      transactions,
+      message: "Transactions fetched successfully",
+    });
   } catch (error) {
     console.error("Error fetching transactions:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
-export const approveDepositeTransaction = async (
+export const approveDepositTransaction = async (
   req: Request,
   res: Response
 ): Promise<any> => {
@@ -194,27 +197,50 @@ export const approveDepositeTransaction = async (
       return res.status(404).json({ message: "Transaction not found" });
     }
 
-    // find and update user wallet
+    // Find and update user wallet
     const wallet = await Wallet.findByIdAndUpdate(
       transaction.wallet,
       { $inc: { balance: transaction.amount } },
       { new: true }
     );
 
-    // Update the transaction fields based on req.body
-    Object.assign(transaction, newInfo);
+    // Check if user has enough balance after update
+    if (!wallet || wallet.balance < 0) {
+      return res.status(400).json({ message: "Insufficient balance" });
+    }
 
-    // sendApprovalEmail(transaction, user);
+    // Update the transaction fields in the database
+    await Transaction.updateOne({ _id: transaction._id }, { $set: newInfo });
+
+    // Send approval email
     const user = await User.findById(transaction.user);
     const data = {
       name: user?.firstName + " " + user?.lastName,
       email: user?.email,
-      ...transaction,
+      amount: transaction.amount,
+      amountInUSD: transaction.amountInUSD,
+      coin: transaction.coin,
+      coinQty: transaction.coinQty,
+      rate: transaction.rate,
+      status: transaction.status,
+      wallet: transaction.wallet,
+      message: transaction.message,
+      date: transaction.updatedAt,
     };
     await sendDepositApprovalEmail(data);
 
+    // Fetch all transactions after approval
+    const transactions = await Transaction.find()
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "user",
+        model: "User",
+        select: "firstName lastName userName email phoneNumber",
+      });
+
+    // Send the response
     res.status(200).json({
-      transaction,
+      transactions,
       wallet,
       message: "Transaction approved successfully",
     });
@@ -240,32 +266,51 @@ export const approveWithdrawTransaction = async (
     }
 
     // find and update user wallet
-    const wallet = await Wallet.findOne({
-      walletId: transaction.wallet,
-    });
+    const wallet = await Wallet.findById(transaction.wallet);
 
-    // update wallet balance if balance is greater than amount
-    if (wallet && wallet.balance > transaction.amount) {
+    // check if user has wallet
+    if (!wallet) {
+      return res.status(404).json({ message: "Wallet not found" });
+    }
+
+    // check if user has enough balance
+    if (wallet.balance > transaction.amount) {
       wallet.balance -= transaction.amount;
       await wallet.save();
     } else {
       return res.status(400).json({ message: "Insufficient balance" });
     }
 
-    // Update the transaction fields based on req.body
-    Object.assign(transaction, newInfo);
+    // Update the transaction fields in the database
+    await Transaction.findByIdAndUpdate(transactionId, { $set: newInfo });
 
     // sendApprovalEmail(transaction, user);
     const user = await User.findById(transaction.user);
     const data = {
       name: user?.firstName + " " + user?.lastName,
       email: user?.email,
-      ...transaction,
+      amount: transaction.amount,
+      amountInUSD: transaction.amountInUSD,
+      bankName: transaction.bankName,
+      accountNumber: transaction.accountNumber,
+      accountName: transaction.accountName,
+      wallet: transaction.wallet,
+      status: transaction.status,
+      message: transaction.message,
+      date: transaction.updatedAt,
     };
     await sendWithdrawApprovalEmail(data);
 
+    const transactions = await Transaction.find()
+      .sort({ createdAt: -1 }) // Sort by createdAt in descending order (-1)
+      .populate({
+        path: "user",
+        model: "User",
+        select: "firstName lastName userName email phoneNumber",
+      });
+
     res.status(200).json({
-      transaction,
+      transactions,
       wallet,
       message: "Transaction approved successfully",
     });
@@ -283,42 +328,84 @@ export const rejectTransaction = async (
   const newInfo = req.body;
 
   try {
+    // Find the transaction and check its status
     const transaction = await Transaction.findById(transactionId);
 
     if (!transaction) {
       return res.status(404).json({ message: "Transaction not found" });
     }
 
-    // Update the transaction fields based on req.body
-    Object.assign(transaction, newInfo);
+    if (transaction.status === "rejected") {
+      return res.status(400).json({ message: "Transaction already declined" });
+    }
 
-    // senddeclinedEmail(transaction, user);
-    if (transaction.type === "deposit") {
-      const user = await User.findById(transaction.user);
+    if (transaction.status === "approved") {
+      return res.status(400).json({
+        message: "Transaction already approved. Please try again later.",
+      });
+    }
+
+    // Update the transaction fields based on req.body and set the status to 'rejected'
+    const updatedTransaction: TransactionDocument | any =
+      await Transaction.findByIdAndUpdate(
+        transactionId,
+        { $set: { ...newInfo, status: "rejected" } },
+        { new: true } // Return the updated document
+      );
+
+    // Send declined email based on the transaction type
+    if (updatedTransaction.type === "deposit") {
+      const user = await User.findById(updatedTransaction.user);
       const data = {
         name: user?.firstName + " " + user?.lastName,
         email: user?.email,
-        ...transaction,
+        amount: updatedTransaction.amount,
+        amountInUSD: updatedTransaction.amountInUSD,
+        coin: updatedTransaction.coin,
+        coinQty: updatedTransaction.coinQty,
+        rate: updatedTransaction.rate,
+        status: updatedTransaction.status,
+        message: updatedTransaction.message,
+        date: updatedTransaction.updatedAt,
       };
       await sendDeclinedDepositEmail(data);
-    } else if (transaction.type === "withdrawal") {
-      const user = await User.findById(transaction.user);
+    } else if (updatedTransaction.type === "withdrawal") {
+      const user = await User.findById(updatedTransaction.user);
       const data = {
         name: user?.firstName + " " + user?.lastName,
         email: user?.email,
-        ...transaction,
+        amount: updatedTransaction.amount,
+        amountInUSD: updatedTransaction.amountInUSD,
+        bankName: updatedTransaction.bankName,
+        accountNumber: updatedTransaction.accountNumber,
+        accountName: updatedTransaction.accountName,
+        wallet: updatedTransaction.wallet,
+        status: updatedTransaction.status,
+        message: updatedTransaction.message,
+        date: updatedTransaction.updatedAt,
       };
       await sendDeclinedWithdrawalEmail(data);
     }
 
-    res
-      .status(200)
-      .json({ transaction, message: "Transaction rejected successfully" });
+    // Fetch updated transactions
+    const transactions = await Transaction.find()
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "user",
+        model: "User",
+        select: "firstName lastName userName email phoneNumber",
+      });
+
+    res.status(200).json({
+      transactions,
+      message: "Transaction rejected successfully",
+    });
   } catch (error) {
     console.error("Error rejecting transaction:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 // routes ends here //
 
 // emails starts herer //

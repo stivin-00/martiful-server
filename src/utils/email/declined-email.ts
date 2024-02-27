@@ -512,7 +512,7 @@ table, td { color: #000000; } @media (max-width: 480px) { #u_content_image_1 .v-
       <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:0px 6px 0px 0px;font-family:arial,helvetica,sans-serif;" align="left">
         
   <div class="v-color v-text-align v-font-size" style="font-size: 14px; line-height: 140%; text-align: right; word-wrap: break-word;">
-    <p style="line-height: 140%;">${formatDateTime(data.createdAt)}</p>
+    <p style="line-height: 140%;">${formatDateTime(data.date)}</p>
   </div>
 
       </td>
@@ -1096,7 +1096,7 @@ export const declinedDepositEmail = (data: any): string => {
         <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:0px 6px 0px 0px;font-family:arial,helvetica,sans-serif;" align="left">
           
     <div class="v-color v-text-align v-font-size" style="font-size: 14px; line-height: 140%; text-align: right; word-wrap: break-word;">
-      <p style="line-height: 140%;">${formatDateTime(data.createdAt)}</p>
+      <p style="line-height: 140%;">${formatDateTime(data.date)}</p>
     </div>
   
         </td>
@@ -1167,7 +1167,7 @@ export const declinedDepositEmail = (data: any): string => {
 //
 
 function formatDateTime(dateString: string | number | Date) {
-  const options = {
+  const options: Intl.DateTimeFormatOptions = {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",

@@ -791,7 +791,7 @@ table, td { color: #000000; } @media (max-width: 480px) { #u_content_heading_1 .
       <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;" align="left">
         
   <div class="v-line-height v-font-size" style="font-size: 14px; line-height: 140%; text-align: right; word-wrap: break-word;">
-    <p style="line-height: 140%;">${formatDateTime(data?.createdAt)}</p>
+    <p style="line-height: 140%;">${formatDateTime(data?.date)}</p>
   </div>
 
       </td>
@@ -1696,7 +1696,7 @@ table, td { color: #000000; } @media (max-width: 480px) { #u_content_heading_1 .
       <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;" align="left">
         
   <div class="v-line-height v-font-size" style="font-size: 14px; line-height: 140%; text-align: right; word-wrap: break-word;">
-    <p style="line-height: 140%;">${formatDateTime(data.createdAt)}</p>
+    <p style="line-height: 140%;">${formatDateTime(data.date)}</p>
   </div>
 
       </td>
@@ -1865,7 +1865,7 @@ table, td { color: #000000; } @media (max-width: 480px) { #u_content_heading_1 .
 //
 
 function formatDateTime(dateString: string | number | Date) {
-  const options = {
+  const options: Intl.DateTimeFormatOptions  = {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",

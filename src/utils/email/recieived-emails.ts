@@ -1172,7 +1172,7 @@ export const receivedWithdrawalEmail = (data: any): string => {
 //
 
 function formatDateTime(dateString: string | number | Date) {
-  const options = {
+  const options: Intl.DateTimeFormatOptions = {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
