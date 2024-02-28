@@ -64,7 +64,7 @@ walletRouter.post(
       if (wallet) {
         res.status(200).json({ wallet, message: "Deposit successful" });
       } else {
-        res.status(400).json({ message: "Insufficient balance" });
+        res.status(400).json({ message: "error depositing to wallet" });
       }
     } catch (error) {
       console.error("Error depositing to wallet:", error);
