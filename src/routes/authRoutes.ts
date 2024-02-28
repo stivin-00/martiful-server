@@ -13,6 +13,7 @@ import {
   updateAccount,
   verifyAccount,
 } from "../controllers/authController";
+import { getTransactionHistory } from "../controllers/transactionController";
 
 const authRouter = express.Router();
 
@@ -25,5 +26,10 @@ authRouter.patch("/update", authenticateUser, updateAccount);
 authRouter.delete("/delete", authenticateUser, deleteAccount);
 authRouter.post("/change-password", authenticateUser, changePassword);
 authRouter.post("/add-bank", authenticateUser, addAccountDetails);
+authRouter.get(
+  "/transaction-history/:userId",
+  authenticateUser,
+  getTransactionHistory
+);
 
 export default authRouter;
