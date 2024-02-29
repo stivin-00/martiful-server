@@ -55,3 +55,16 @@ export const deleteAsset = async (req: Request, res: Response): Promise<void> =>
     res.status(500).json({ message: "Internal server error" });
   }
 }
+
+
+// get single asset by name
+export const getAssetByName = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { name } = req.params;
+    const asset = await Asset.findOne({ name });
+    res.status(200).json({ asset, message: "Asset fetched successfully" });
+  } catch (error) {
+    console.error("Error fetching asset:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}

@@ -6,6 +6,7 @@ import {
   createAsset,
   updateAsset,
   deleteAsset,
+  getAssetByName,
 } from "../controllers/asssetController";
 import { authenticateAdmin } from "../middlewares/authMiddleware";
 
@@ -15,5 +16,6 @@ assetRouter.post("/", authenticateAdmin, createAsset);
 assetRouter.get("/", getAllAssets);
 assetRouter.patch("/:id", authenticateAdmin, updateAsset);
 assetRouter.delete("/:id", authenticateAdmin, deleteAsset);
+assetRouter.get("/:name", getAssetByName);
 
 export default assetRouter;
