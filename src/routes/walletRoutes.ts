@@ -8,7 +8,10 @@ import {
   withdraw,
 } from "../controllers/walletController";
 import { authenticateUser } from "../middlewares/authMiddleware";
-import { getTransactionHistory } from "../controllers/transactionController";
+import {
+  getTransaction,
+  getTransactionHistory,
+} from "../controllers/transactionController";
 import AuthRequest from "request";
 
 const walletRouter = express.Router();
@@ -104,17 +107,18 @@ walletRouter.get(
   async (req: AuthRequest<any>, res) => {
     try {
       const transactions = await getTransactionHistory(req.user._id);
-      res
-        .status(200)
-        .json({
-          transactions,
-          message: "Transaction history fetched successfully",
-        });
+      res.status(200).json({
+        transactions,
+        message: "Transaction history fetched successfully",
+      });
     } catch (error) {
       console.error("Error fetching transaction history:", error);
       res.status(500).json({ message: "Internal server error" });
     }
   }
 );
+
+// get single transaction by id
+walletRouter.get("/transactions/:id", authenticateUser, getTransaction);
 
 export default walletRouter;

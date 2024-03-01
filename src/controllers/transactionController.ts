@@ -3,6 +3,7 @@
 import { Request, Response } from "express";
 import Transaction from "../models/transaction";
 import { TransactionDocument } from "../types/transaction";
+import AuthRequest from "request";
 
 export const getTransactionHistory = async (userId: string): Promise<TransactionDocument[]> => {
   try {
@@ -20,3 +21,20 @@ export const getTransactionHistory = async (userId: string): Promise<Transaction
     throw error;
   }
 };
+
+// get single transaction by id
+export const getTransaction = async (req: AuthRequest<any>, res: Response) => {
+  try {
+    const transaction = await Transaction.findById(req.params.id);
+
+    if (!transaction) {
+      return res.status(404).json({ message: "Transaction not found" });
+    }
+
+    res.status(200).json(transaction);
+  } catch (error) {
+    console.error("Error fetching transaction:", error);
+  }
+}
+
+
