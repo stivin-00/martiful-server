@@ -17,9 +17,9 @@ const uri =
 
 const app: Application = express();
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount)
+// });
 
 // Middleware
 app.use(cors());
