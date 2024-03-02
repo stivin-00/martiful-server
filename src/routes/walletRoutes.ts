@@ -54,7 +54,7 @@ walletRouter.post(
         ourWalletAddress,
         yourWalletAddress,
       } = req.body;
-      const wallet = await deposit(
+      const transaction = await deposit(
         req.user._id,
         amount,
         image,
@@ -64,8 +64,8 @@ walletRouter.post(
         ourWalletAddress,
         yourWalletAddress
       );
-      if (wallet) {
-        res.status(200).json({ wallet, message: "Deposit successful" });
+      if (transaction) {
+        res.status(200).json({ transaction, message: "Deposit successful" });
       } else {
         res.status(400).json({ message: "error depositing to wallet" });
       }
@@ -82,15 +82,15 @@ walletRouter.post(
   async (req: AuthRequest<any>, res) => {
     try {
       const { amount, bankName, accountNumber, accountName } = req.body;
-      const wallet = await withdraw(
+      const transaction = await withdraw(
         req.user._id,
         amount,
         bankName,
         accountNumber,
         accountName
       );
-      if (wallet) {
-        res.status(200).json({ wallet, message: "Withdrawal successful" });
+      if (transaction) {
+        res.status(200).json({ transaction, message: "Withdrawal successful" });
       } else {
         res.status(400).json({ message: "Insufficient balance" });
       }

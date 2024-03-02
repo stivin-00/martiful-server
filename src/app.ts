@@ -1,19 +1,25 @@
 import express, { Application, NextFunction, Request, Response } from "express";
 import mongoose, { ConnectOptions, Connection } from "mongoose";
 import cors from "cors";
+import admin from "firebase-admin";
 import morgan from "morgan";
 import helmet from "helmet";
 import bodyParser from "body-parser";
 import authRouter from "./routes/authRoutes";
 import uploadRouter from "./routes/uploadRouter";
 import adminRouter from "./routes/adminRoutes";
-import { requestAdminLogin, verifyAdminLogin } from "./controllers/adminController";
+import serviceAccount from "./martiful-firebase.json";
+
 import assetRouter from "./routes/assetRotes";
 import walletRouter from "./routes/walletRoutes";
 const uri =
   "mongodb+srv://stivin:vivian2436@martiful.cmoufbr.mongodb.net/?retryWrites=true&w=majority";
 
 const app: Application = express();
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
 
 // Middleware
 app.use(cors());
@@ -37,7 +43,7 @@ app.get("/api/", (req, res) => {
 app.use("/api/admin", adminRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/upload", uploadRouter);
-app.use("/api/asset", assetRouter)
+app.use("/api/asset", assetRouter);
 app.use("/api/wallet", walletRouter);
 
 // Error handling middleware

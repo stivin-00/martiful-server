@@ -7,7 +7,7 @@ import AuthRequest from "request";
 
 export const getTransactionHistory = async (userId: string): Promise<TransactionDocument[]> => {
   try {
-    // Find transactions related to the user's wallet by user id
+    // Find transactions related to the user's wallet by user id 
     const transactions = await Transaction.find({ user: userId });
 
     // Extract populated transactions

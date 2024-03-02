@@ -2,7 +2,7 @@
 
 import { Request, Response } from "express";
 import Wallet from "../models/wallet";
-import Transaction from "../models/transaction";
+import Transaction, { TransactionDocument } from "../models/transaction";
 import { WalletDocument } from "../types/wallet";
 import User from "../models/user";
 import { mailTransporter } from "../utils/email/email";
@@ -44,12 +44,12 @@ export const deposit = async (
   amountInUSD: number,
   ourWalletAddress: string,
   yourWalletAddress: string
-): Promise<WalletDocument | null> => {
+): Promise<TransactionDocument | null> => {
   try {
     const wallet = await Wallet.findOne({ user: userId });
 
     // Log the deposit as a transaction
-    await logDepositTransaction(
+    const transaction = await logDepositTransaction(
       userId,
       wallet?._id,
       amount,
@@ -64,7 +64,7 @@ export const deposit = async (
       ""
     );
 
-    return wallet;
+    return transaction;
   } catch (error) {
     console.error("Error depositing to wallet:", error);
     throw error;
@@ -77,12 +77,12 @@ export const withdraw = async (
   bankName: string,
   accountNumber: string,
   accountName: string
-): Promise<WalletDocument | null> => {
+): Promise<TransactionDocument | null> => {
   try {
     const wallet = await Wallet.findOne({ user: userId });
 
     // Log the withdrawal as a transaction
-    await logWithdrawTransaction(
+    const transaction = await logWithdrawTransaction(
       userId,
       wallet?._id,
       amount,
@@ -94,7 +94,7 @@ export const withdraw = async (
       ""
     );
 
-    return wallet;
+    return transaction;
   } catch (error) {
     console.error("Error withdrawing from wallet:", error);
     throw error;
@@ -114,7 +114,7 @@ const logDepositTransaction = async (
   ourWalletAddress: string,
   yourWalletAddress: string,
   message: string
-): Promise<void> => {
+): Promise<any> => {
   try {
     if (walletId) {
       const transaction = new Transaction({
@@ -141,6 +141,8 @@ const logDepositTransaction = async (
         ...transaction,
       };
       await sendDepositReceivedEmail(data);
+
+      return transaction;
     }
   } catch (error) {
     console.error("Error logging transaction:", error);
@@ -158,7 +160,7 @@ const logWithdrawTransaction = async (
   accountNumber: string,
   accountName: string,
   message: string
-): Promise<void> => {
+): Promise<any> => {
   try {
     if (walletId) {
       const transaction = new Transaction({
@@ -182,6 +184,8 @@ const logWithdrawTransaction = async (
         ...transaction,
       };
       await sendWithdrawReceivedEmail(data);
+
+      return transaction;
     }
   } catch (error) {
     console.error("Error logging transaction:", error);
