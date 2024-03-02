@@ -50,6 +50,7 @@ walletRouter.post(
         image,
         coin,
         coinQty,
+        rate,
         amountInUSD,
         ourWalletAddress,
         yourWalletAddress,
@@ -60,6 +61,7 @@ walletRouter.post(
         image,
         coin,
         coinQty,
+        rate,
         amountInUSD,
         ourWalletAddress,
         yourWalletAddress
