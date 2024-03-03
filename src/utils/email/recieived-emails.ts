@@ -523,7 +523,7 @@ export const receivedDepositEmail = (data: any): string => {
         <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:0px 6px 0px 0px;font-family:arial,helvetica,sans-serif;" align="left">
           
     <div class="v-font-size" style="font-size: 14px; line-height: 140%; text-align: right; word-wrap: break-word;">
-      <p style="line-height: 140%;">${formatDateTime(data?.createdAt)}</p>
+      <p style="line-height: 140%;">${formatDateTime(data?.date)}</p>
     </div>
   
         </td>
@@ -1102,7 +1102,7 @@ export const receivedWithdrawalEmail = (data: any): string => {
         <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:0px 6px 0px 0px;font-family:arial,helvetica,sans-serif;" align="left">
           
     <div class="v-font-size" style="font-size: 14px; line-height: 140%; text-align: right; word-wrap: break-word;">
-      <p style="line-height: 140%;">${formatDateTime(data.createdAt)}</p>
+      <p style="line-height: 140%;">${formatDateTime(data.date)}</p>
     </div>
   
         </td>
