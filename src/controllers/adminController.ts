@@ -157,8 +157,31 @@ export const getUsers = async (
   }
 };
 
-// get all transactions
-// Update your getAllTransactions controller
+// get user by id and their transtion
+export const getUserById = async (
+  req: AuthRequest<Partial<AdminDocument>>,
+  res: Response
+): Promise<any> => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findById(userId)
+      .select("-password")
+      .populate({
+        path: "transactions",
+        model: "Transaction",
+        options: { sort: { createdAt: -1 } },
+      })
+
+    res.status(200).json({ user, message: "User fetched successfully" });
+  }
+  catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+
 export const getAllTransactions = async (
   req: AuthRequest<Partial<AdminDocument>>,
   res: Response

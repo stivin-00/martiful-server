@@ -63,7 +63,7 @@ export const deposit = async (
       amountInUSD,
       ourWalletAddress,
       yourWalletAddress,
-      ""
+      "Transaction received successfully, awaiting confirmation from admin"
     );
 
     return transaction;
@@ -93,7 +93,7 @@ export const withdraw = async (
       bankName,
       accountNumber,
       accountName,
-      ""
+      "Withdrawal request received successfully, awaiting confirmation from admin"
     );
 
     return transaction;
@@ -142,7 +142,16 @@ const logDepositTransaction = async (
       const data = {
         name: customer?.firstName + " " + customer?.lastName,
         email: customer?.email,
-        ...transaction,
+        amount,
+        type,
+        coin,
+        coinQty,
+        rate,
+        amountInUSD,
+        wallet: transaction.wallet,
+        message,
+        status,
+        date: transaction.createdAt,
       };
       await sendDepositReceivedEmail(data);
 
@@ -185,7 +194,15 @@ const logWithdrawTransaction = async (
       const data = {
         name: customer?.firstName + " " + customer?.lastName,
         email: customer?.email,
-        ...transaction,
+        amount,
+        type,
+        bankName,
+        accountNumber,
+        accountName,
+        message,
+        status,
+        wallet: transaction.wallet,
+        date: transaction.createdAt,
       };
       await sendWithdrawReceivedEmail(data);
 
@@ -203,7 +220,7 @@ const generateWalletId = (): string => {
   const randomNumbers = Math.floor(Math.random() * 1000000)
     .toString()
     .padStart(6, "0");
-  return `0mar${randomNumbers}`;
+  return `0mt${randomNumbers}`;
 };
 //
 

@@ -6,6 +6,7 @@ import {
   approveWithdrawTransaction,
   createAdmin,
   getAllTransactions,
+  getUserById,
   getUsers,
   rejectTransaction,
   requestAdminLogin,
@@ -21,6 +22,7 @@ adminRouter.post("/create", authenticateAdmin, createAdmin);
 adminRouter.post("/login", requestAdminLogin);
 adminRouter.post("/verify-login", verifyAdminLogin);
 adminRouter.get("/users", getUsers);
+adminRouter.get("/user/:userId", authenticateAdmin, getUserById);
 adminRouter.patch(
   "/approve-deposit/:transactionId",
   authenticateAdmin,
