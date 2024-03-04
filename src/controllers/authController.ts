@@ -93,7 +93,7 @@ export const loginUser = async (
 
     // check if user is Suspended
     if (user.isSuspended) {
-      return res.status(403).json({ message: "User is suspended, Please contact support" });
+      return res.status(403).json({ message: "Account is suspended, Please contact support" });
     }
 
     // Generate and sign a JWT token

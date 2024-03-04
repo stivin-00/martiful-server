@@ -165,22 +165,33 @@ export const getUserById = async (
   try {
     const { userId } = req.params;
 
-    const user = await User.findById(userId)
-      .select("-password")
-      .populate({
-        path: "transactions",
-        model: "Transaction",
-        options: { sort: { createdAt: -1 } },
-      })
+    const user = await User.findById(userId).select("-password");
 
-    res.status(200).json({ user, message: "User fetched successfully" });
-  }
-  catch (error) {
+    const transactions = await Transaction.find({ user: userId }).sort({
+      createdAt: -1,
+    });
+
+    const data = {
+      _id: user?._id,
+      avatar: user?.avatar,
+      userName: user?.userName,
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      email: user?.email,
+      phoneNumber: user?.phoneNumber,
+      accountDetails: user?.accountDetails,
+      isVerified: user?.isVerified,
+      isSuspended: user?.isSuspended,
+      createdAt: user?.createdAt, 
+      transactions,
+    };
+
+    res.status(200).json({ user: data, message: "User fetched successfully" });
+  } catch (error) {
     console.error("Error fetching user:", error);
     res.status(500).json({ message: "Internal server error" });
   }
-}
-
+};
 
 export const getAllTransactions = async (
   req: AuthRequest<Partial<AdminDocument>>,

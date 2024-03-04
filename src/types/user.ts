@@ -13,6 +13,11 @@ export interface UserDocument extends Document {
   userName: string;
   email: string;
   token: string;
+  phoneNumber: string;
+  avatar: {
+    public_id: string;
+    url: string;
+  }
   resetPasswordToken: string;
   resetPasswordExpires: string;
   password: string;
@@ -20,4 +25,5 @@ export interface UserDocument extends Document {
   isSuspended: boolean;
   verificationToken: string;
   accountDetails: AccountDetail[];
+  createdAt: Date;
 }

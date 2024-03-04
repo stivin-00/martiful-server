@@ -21,7 +21,7 @@ console.log("Admin routes are being initialized");
 adminRouter.post("/create", authenticateAdmin, createAdmin);
 adminRouter.post("/login", requestAdminLogin);
 adminRouter.post("/verify-login", verifyAdminLogin);
-adminRouter.get("/users", getUsers);
+adminRouter.get("/users", authenticateAdmin, getUsers);
 adminRouter.get("/user/:userId", authenticateAdmin, getUserById);
 adminRouter.patch(
   "/approve-deposit/:transactionId",
