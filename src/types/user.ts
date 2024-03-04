@@ -17,6 +17,7 @@ export interface UserDocument extends Document {
   resetPasswordExpires: string;
   password: string;
   isVerified: boolean;
+  isSuspended: boolean;
   verificationToken: string;
   accountDetails: AccountDetail[];
 }

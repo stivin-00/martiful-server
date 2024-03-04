@@ -44,6 +44,7 @@ const userSchema = new Schema(
     },
     referralCode: { type: String, default: null },
     isVerified: { type: Boolean, default: false },
+    isSuspended: { type: Boolean, default: false },
     verificationToken: { type: String, default: null },
     resetPasswordToken: { type: String, default: null },
     resetPasswordExpires: { type: String, default: null },
