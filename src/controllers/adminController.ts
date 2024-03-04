@@ -193,6 +193,34 @@ export const getUserById = async (
   }
 };
 
+// change user suspend status
+export const suspendUser = async (
+  req: AuthRequest<Partial<AdminDocument>>,
+  res: Response
+): Promise<any> => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.isSuspended = !user.isSuspended;
+    await user.save();
+
+    res.status(200).json({
+      user, message: `User ${user.isSuspended ? "suspended" : "unsuspended"}`,
+    })
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+}; 
+
+ 
+
+
 export const getAllTransactions = async (
   req: AuthRequest<Partial<AdminDocument>>,
   res: Response

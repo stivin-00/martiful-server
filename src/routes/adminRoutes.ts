@@ -10,6 +10,7 @@ import {
   getUsers,
   rejectTransaction,
   requestAdminLogin,
+  suspendUser,
   verifyAdminLogin,
 } from "../controllers/adminController";
 import { authenticateAdmin } from "../middlewares/authMiddleware";
@@ -23,6 +24,7 @@ adminRouter.post("/login", requestAdminLogin);
 adminRouter.post("/verify-login", verifyAdminLogin);
 adminRouter.get("/users", authenticateAdmin, getUsers);
 adminRouter.get("/user/:userId", authenticateAdmin, getUserById);
+adminRouter.patch("/user/suspend/:userId", authenticateAdmin, suspendUser);
 adminRouter.patch(
   "/approve-deposit/:transactionId",
   authenticateAdmin,
