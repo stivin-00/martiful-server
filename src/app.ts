@@ -33,12 +33,6 @@ admin.initializeApp({
 });
 
 // Routes
-app.get("/api/", (req, res) => {
-  res.send(`
-  <img align="center" border="0" src="https://res.cloudinary.com/balmai/image/upload/v1676460395/wallhaven-g82wqd-1_ihjta7.jpg"  style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: 100vh;float: none;width: 100vw; class="v-src-width v-src-max-width"/>
-    
-    `);
-});
 
 app.use("/api/admin", adminRouter);
 app.use("/api/auth", authRouter);
