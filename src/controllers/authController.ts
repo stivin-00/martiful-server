@@ -59,7 +59,7 @@ export const loginUser = async (
 ) => {
   console.log("started");
   try {
-    const { email, password } = req.body;
+    const { email, password, fcmToken } = req.body;
 
     if (!email || !password) {
       return res
@@ -69,6 +69,12 @@ export const loginUser = async (
 
     // Find the user by email
     const user = await User.findOne({ email });
+
+    // update user fcm token
+    if (fcmToken && user) {
+      user.fcmToken = fcmToken;
+      await user.save();
+    }
 
     if (!user) {
       return res
@@ -93,7 +99,9 @@ export const loginUser = async (
 
     // check if user is Suspended
     if (user.isSuspended) {
-      return res.status(403).json({ message: "Account is suspended, Please contact support" });
+      return res
+        .status(403)
+        .json({ message: "Account is suspended, Please contact support" });
     }
 
     // Generate and sign a JWT token
@@ -240,7 +248,7 @@ export const forgotPassword = async (
 
     // Check if the user is verified
     if (!user.isVerified) {
-        return res.status(400).json({ message: "User is not verified" });
+      return res.status(400).json({ message: "User is not verified" });
     }
 
     // Generate a password reset token

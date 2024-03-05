@@ -64,3 +64,4 @@ export const authenticateAdmin = (
     res.status(401).json({ message: "Unauthorized: Invalid token" });
   }
 };
+

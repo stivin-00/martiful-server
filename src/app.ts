@@ -4,12 +4,13 @@ import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
 import bodyParser from "body-parser";
+import admin from 'firebase-admin';
 import authRouter from "./routes/authRoutes";
 import uploadRouter from "./routes/uploadRouter";
 import adminRouter from "./routes/adminRoutes";
-
 import assetRouter from "./routes/assetRotes";
 import walletRouter from "./routes/walletRoutes";
+import serviceAccount from './martiful-firebase.json'
 const uri =
   "mongodb+srv://stivin:vivian2436@martiful.cmoufbr.mongodb.net/?retryWrites=true&w=majority";
 
@@ -24,6 +25,11 @@ app.use(bodyParser.json());
 // Connect to the database
 mongoose.connect(uri).then(() => {
   console.log("Connected to the databasesssssss");
+});
+
+// Initialize Firebase Admin SDK
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
 });
 
 // Routes

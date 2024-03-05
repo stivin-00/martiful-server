@@ -17,13 +17,14 @@ export interface UserDocument extends Document {
   avatar: {
     public_id: string;
     url: string;
-  }
+  };
   resetPasswordToken: string;
   resetPasswordExpires: string;
   password: string;
   isVerified: boolean;
   isSuspended: boolean;
   verificationToken: string;
+  fcmToken: string;
   accountDetails: AccountDetail[];
   createdAt: Date;
 }

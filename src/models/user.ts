@@ -48,6 +48,7 @@ const userSchema = new Schema(
     verificationToken: { type: String, default: null },
     resetPasswordToken: { type: String, default: null },
     resetPasswordExpires: { type: String, default: null },
+    fcmToken: { type: String, default: null },
     accountDetails: [accountDetailsSchema], // Array of account details
   },
 
