@@ -4,7 +4,7 @@
   "description": "the server for martifuls web and mobile app",
   "main": "dist/server.js",
   "scripts": {
-    "start": "npx ts-node src/server.ts",
+    "start": "npx ts-node dist/server.js",
     "dev": "nodemon --exec npx ts-node dist/server.ts",
     "build": "tsc"
   },
