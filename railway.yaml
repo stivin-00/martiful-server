@@ -1,0 +1,2 @@
+- name: install
+  command: npm install --omit=dev
