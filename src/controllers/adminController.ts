@@ -215,10 +215,10 @@ export const suspendUser = async (
     const title = `Your account has been ${
       user.isSuspended ? "suspended" : "unsuspended"
     }`;
-    const body = `${
+    const body = `Dear ${user.lastName} ${user.firstName}, ${
       user.isSuspended
-        ? "Your account has been suspended by the admin, please contact our support team for further details"
-        : "Your account has been unsuspended by the admin, please proceed with your transactions "
+        ? "your account has been suspended by the admin, please contact our support team for further details"
+        : "your account has been unsuspended by the admin, please proceed with your transactions "
     } `;
 
     await sendPushNotification(user.fcmToken, title, body);
@@ -307,7 +307,7 @@ export const approveDepositTransaction = async (
       await sendPushNotification(
         user?.fcmToken,
         "Deposit Successful",
-        `Your transaction of ${transaction.coinQty}${transaction.coin} for ₦${transaction.amount} has been approved`
+        `Dear ${user.lastName} ${user.firstName}, your transaction of ${transaction.coinQty}${transaction.coin} for ₦${transaction.amount} has been approved`
       );
     }
 
@@ -388,7 +388,7 @@ export const approveWithdrawTransaction = async (
       await sendPushNotification(
         user?.fcmToken,
         "Withdrawal Successful",
-        `Your withdrawal of ₦${transaction.amount} has been approved and money sent to ${transaction.accountName} ${transaction.bankName}`
+        `Dear ${user.lastName} ${user.firstName}, your withdrawal of ₦${transaction.amount} has been approved and money sent to ${transaction.accountName} ${transaction.bankName}`
       );
     }
 

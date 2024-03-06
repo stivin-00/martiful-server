@@ -55,7 +55,7 @@ const updateAsset = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         const { name, image, qrcode, rate, walletAddress } = req.body;
         const updatedAsset = yield assets_1.default.findByIdAndUpdate(id, { name, image, qrcode, rate, walletAddress }, { new: true });
         const title = `New rate for ${name}`;
-        const body = `Trade ₦${name} now at ${rate}/USD and enjoy your profits!`;
+        const body = `Trade ${name} now at ₦${rate}/USD and enjoy your profits!`;
         // Retrieve all users with FCM tokens
         const users = yield user_1.default.find({ fcmToken: { $ne: null } });
         // Send push notifications to all users
