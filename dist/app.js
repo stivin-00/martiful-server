@@ -25,7 +25,7 @@ app.use((0, morgan_1.default)("combined"));
 app.use(body_parser_1.default.json());
 // Connect to the database
 mongoose_1.default.connect(uri).then(() => {
-    console.log("Connected to the databasesssssss");
+    console.log("Connected to the databas");
 });
 // Initialize Firebase Admin SDK
 firebase_admin_1.default.initializeApp({

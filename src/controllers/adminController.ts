@@ -19,6 +19,7 @@ import {
   declinedDepositEmail,
   declinedWithdrawalEmail,
 } from "../utils/email/declined-email";
+import { sendPushNotification } from "../utils/notification";
 
 export const createAdmin = async (
   req: AuthRequest<Partial<AdminDocument>>,
@@ -182,7 +183,7 @@ export const getUserById = async (
       accountDetails: user?.accountDetails,
       isVerified: user?.isVerified,
       isSuspended: user?.isSuspended,
-      createdAt: user?.createdAt, 
+      createdAt: user?.createdAt,
       transactions,
     };
 
@@ -210,16 +211,26 @@ export const suspendUser = async (
     user.isSuspended = !user.isSuspended;
     await user.save();
 
+    // Send a push notification to the user
+    const title = `Your account has been ${
+      user.isSuspended ? "suspended" : "unsuspended"
+    }`;
+    const body = `${
+      user.isSuspended
+        ? "Your account has been suspended by the admin, please contact our support team for further details"
+        : "Your account has been unsuspended by the admin, please proceed with your transactions "
+    } `;
+
+    await sendPushNotification(user.fcmToken, title, body);
+
     res.status(200).json({
-      user, message: `User ${user.isSuspended ? "suspended" : "unsuspended"}`,
-    })
+      user,
+      message: `User ${user.isSuspended ? "suspended" : "unsuspended"}`,
+    });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
-}; 
-
- 
-
+};
 
 export const getAllTransactions = async (
   req: AuthRequest<Partial<AdminDocument>>,
@@ -290,6 +301,15 @@ export const approveDepositTransaction = async (
       date: transaction.updatedAt,
     };
     await sendDepositApprovalEmail(data);
+
+    // send push notification
+    if (user?.fcmToken) {
+      await sendPushNotification(
+        user?.fcmToken,
+        "Deposit Successful",
+        `Your transaction of ${transaction.coinQty}${transaction.coin} for ₦${transaction.amount} has been approved`
+      );
+    }
 
     // Fetch all transactions after approval
     const transactions = await Transaction.find()
@@ -362,6 +382,15 @@ export const approveWithdrawTransaction = async (
       date: transaction.updatedAt,
     };
     await sendWithdrawApprovalEmail(data);
+
+    // send push notification
+    if (user?.fcmToken) {
+      await sendPushNotification(
+        user?.fcmToken,
+        "Withdrawal Successful",
+        `Your withdrawal of ₦${transaction.amount} has been approved and money sent to ${transaction.accountName} ${transaction.bankName}`
+      );
+    }
 
     const transactions = await Transaction.find()
       .sort({ createdAt: -1 }) // Sort by createdAt in descending order (-1)

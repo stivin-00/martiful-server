@@ -58,7 +58,7 @@ export const updateAsset = async (
     );
 
     const title = `New rate for ${name}`;
-    const body = `Trade ${name} now at ${rate} USD and enjoy your profits!`;
+    const body = `Trade ₦${name} now at ${rate}/USD and enjoy your profits!`;
 
     // Retrieve all users with FCM tokens
     const users = await User.find({ fcmToken: { $ne: null } });

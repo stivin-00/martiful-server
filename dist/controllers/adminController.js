@@ -24,6 +24,7 @@ const transaction_1 = __importDefault(require("../models/transaction"));
 const wallet_1 = __importDefault(require("../models/wallet"));
 const approved_email_1 = require("../utils/email/approved-email");
 const declined_email_1 = require("../utils/email/declined-email");
+const notification_1 = require("../utils/notification");
 const createAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log(req.body);
@@ -175,8 +176,15 @@ const suspendUser = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         }
         user.isSuspended = !user.isSuspended;
         yield user.save();
+        // Send a push notification to the user
+        const title = `Your account has been ${user.isSuspended ? "suspended" : "unsuspended"}`;
+        const body = `${user.isSuspended
+            ? "Your account has been suspended by the admin, please contact our support team for further details"
+            : "Your account has been unsuspended by the admin, please proceed with your transactions "} `;
+        yield (0, notification_1.sendPushNotification)(user.fcmToken, title, body);
         res.status(200).json({
-            user, message: `User ${user.isSuspended ? "suspended" : "unsuspended"}`,
+            user,
+            message: `User ${user.isSuspended ? "suspended" : "unsuspended"}`,
         });
     }
     catch (error) {
@@ -237,6 +245,10 @@ const approveDepositTransaction = (req, res) => __awaiter(void 0, void 0, void 0
             date: transaction.updatedAt,
         };
         yield sendDepositApprovalEmail(data);
+        // send push notification
+        if (user === null || user === void 0 ? void 0 : user.fcmToken) {
+            yield (0, notification_1.sendPushNotification)(user === null || user === void 0 ? void 0 : user.fcmToken, "Deposit Successful", `Your transaction of ${transaction.coinQty}${transaction.coin} for ₦${transaction.amount} has been approved`);
+        }
         // Fetch all transactions after approval
         const transactions = yield transaction_1.default.find()
             .sort({ createdAt: -1 })
@@ -299,6 +311,10 @@ const approveWithdrawTransaction = (req, res) => __awaiter(void 0, void 0, void 
             date: transaction.updatedAt,
         };
         yield sendWithdrawApprovalEmail(data);
+        // send push notification
+        if (user === null || user === void 0 ? void 0 : user.fcmToken) {
+            yield (0, notification_1.sendPushNotification)(user === null || user === void 0 ? void 0 : user.fcmToken, "Withdrawal Successful", `Your withdrawal of ₦${transaction.amount} has been approved and money sent to ${transaction.accountName} ${transaction.bankName}`);
+        }
         const transactions = yield transaction_1.default.find()
             .sort({ createdAt: -1 }) // Sort by createdAt in descending order (-1)
             .populate({
