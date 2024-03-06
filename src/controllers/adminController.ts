@@ -459,7 +459,19 @@ export const rejectTransaction = async (
         message: updatedTransaction.message,
         date: updatedTransaction.updatedAt,
       };
+
+
+      // Send push notification(deposit declined)
+      if (user?.fcmToken) {
+        await sendPushNotification(
+          user?.fcmToken,
+          "Deposit Declined",
+          `Dear ${user.lastName} ${user.firstName}, your deposit of ${updatedTransaction.coinQty} ${updatedTransaction.coin} at ₦${updatedTransaction.amount} has been declined`
+        )
+      }
+      // Send declined deposit email
       await sendDeclinedDepositEmail(data);
+
     } else if (updatedTransaction.type === "withdrawal") {
       const user = await User.findById(updatedTransaction.user);
       const data = {
@@ -475,6 +487,16 @@ export const rejectTransaction = async (
         message: updatedTransaction.message,
         date: updatedTransaction.updatedAt,
       };
+
+      // Send push notification(withdrawal declined)
+      if (user?.fcmToken) {
+        await sendPushNotification(
+          user?.fcmToken,
+          "Withdrawal Declined",
+          `Dear ${user.lastName} ${user.firstName}, your withdrawal of ₦${updatedTransaction.amount} has been declined`
+        );
+      }
+      // Send declined withdrawal email
       await sendDeclinedWithdrawalEmail(data);
     }
 

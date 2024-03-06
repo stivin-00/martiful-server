@@ -369,6 +369,11 @@ const rejectTransaction = (req, res) => __awaiter(void 0, void 0, void 0, functi
                 message: updatedTransaction.message,
                 date: updatedTransaction.updatedAt,
             };
+            // Send push notification(deposit declined)
+            if (user === null || user === void 0 ? void 0 : user.fcmToken) {
+                yield (0, notification_1.sendPushNotification)(user === null || user === void 0 ? void 0 : user.fcmToken, "Deposit Declined", `Dear ${user.lastName} ${user.firstName}, your deposit of ${updatedTransaction.coinQty} ${updatedTransaction.coin} at ₦${updatedTransaction.amount} has been declined`);
+            }
+            // Send declined deposit email
             yield sendDeclinedDepositEmail(data);
         }
         else if (updatedTransaction.type === "withdrawal") {
@@ -386,6 +391,11 @@ const rejectTransaction = (req, res) => __awaiter(void 0, void 0, void 0, functi
                 message: updatedTransaction.message,
                 date: updatedTransaction.updatedAt,
             };
+            // Send push notification(withdrawal declined)
+            if (user === null || user === void 0 ? void 0 : user.fcmToken) {
+                yield (0, notification_1.sendPushNotification)(user === null || user === void 0 ? void 0 : user.fcmToken, "Withdrawal Declined", `Dear ${user.lastName} ${user.firstName}, your withdrawal of ₦${updatedTransaction.amount} has been declined`);
+            }
+            // Send declined withdrawal email
             yield sendDeclinedWithdrawalEmail(data);
         }
         // Fetch updated transactions
