@@ -24,7 +24,7 @@ app.use(bodyParser.json());
 
 // Connect to the database
 mongoose.connect(uri).then(() => {
-  console.log("Connected to the databas");
+  console.log("Connected to the databass");
 });
 
 // Initialize Firebase Admin SDK
