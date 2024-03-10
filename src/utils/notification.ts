@@ -8,7 +8,7 @@ export async function sendPushNotification(
   try {
     await admin.messaging().send({
       token: fcmToken,
-      notification: {
+      data: {
         title,
         body,
       },

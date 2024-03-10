@@ -19,7 +19,7 @@ function sendPushNotification(fcmToken, title, body) {
         try {
             yield firebase_admin_1.default.messaging().send({
                 token: fcmToken,
-                notification: {
+                data: {
                     title,
                     body,
                 },
