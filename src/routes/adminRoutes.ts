@@ -6,6 +6,8 @@ import {
   approveWithdrawTransaction,
   createAdmin,
   getAllTransactions,
+  getDashboardInfo,
+  getDashboardInfo30Days,
   getUserById,
   getUsers,
   rejectTransaction,
@@ -41,5 +43,11 @@ adminRouter.patch(
   rejectTransaction
 );
 adminRouter.get("/transactions", authenticateAdmin, getAllTransactions);
+adminRouter.get("/dashboard-info", authenticateAdmin, getDashboardInfo);
+adminRouter.get(
+  "/dashboard-info-30-days",
+  authenticateAdmin,
+  getDashboardInfo30Days
+);
 
 export default adminRouter;

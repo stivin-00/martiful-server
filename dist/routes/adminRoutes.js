@@ -19,5 +19,7 @@ adminRouter.patch("/approve-deposit/:transactionId", authMiddleware_1.authentica
 adminRouter.patch("/approve-withdrawal/:transactionId", authMiddleware_1.authenticateAdmin, adminController_1.approveWithdrawTransaction);
 adminRouter.patch("/reject-transaction/:transactionId", authMiddleware_1.authenticateAdmin, adminController_1.rejectTransaction);
 adminRouter.get("/transactions", authMiddleware_1.authenticateAdmin, adminController_1.getAllTransactions);
+adminRouter.get("/dashboard-info", authMiddleware_1.authenticateAdmin, adminController_1.getDashboardInfo);
+adminRouter.get("/dashboard-info-30-days", authMiddleware_1.authenticateAdmin, adminController_1.getDashboardInfo30Days);
 exports.default = adminRouter;
 //# sourceMappingURL=adminRoutes.js.map

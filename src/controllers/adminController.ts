@@ -21,6 +21,7 @@ import {
 } from "../utils/email/declined-email";
 import { sendPushNotification } from "../utils/notification";
 
+// create admin
 export const createAdmin = async (
   req: AuthRequest<Partial<AdminDocument>>,
   res: Response
@@ -66,6 +67,7 @@ export const createAdmin = async (
   }
 };
 
+// request admin login to get otp
 export const requestAdminLogin = async (
   req: AuthRequest<Partial<AdminDocument>>,
   res: Response
@@ -116,6 +118,7 @@ export const requestAdminLogin = async (
   }
 };
 
+// verify admin login
 export const verifyAdminLogin = async (
   req: AuthRequest<Partial<AdminDocument>>,
   res: Response
@@ -144,6 +147,7 @@ export const verifyAdminLogin = async (
   }
 };
 
+// get all users
 export const getUsers = async (
   req: AuthRequest<Partial<AdminDocument>>,
   res: Response
@@ -232,6 +236,7 @@ export const suspendUser = async (
   }
 };
 
+// get all transaction
 export const getAllTransactions = async (
   req: AuthRequest<Partial<AdminDocument>>,
   res: Response
@@ -255,6 +260,7 @@ export const getAllTransactions = async (
   }
 };
 
+// approve deposite transaction
 export const approveDepositTransaction = async (
   req: Request,
   res: Response
@@ -332,6 +338,7 @@ export const approveDepositTransaction = async (
   }
 };
 
+// approve withdrawal transaction
 export const approveWithdrawTransaction = async (
   req: Request,
   res: Response
@@ -411,6 +418,7 @@ export const approveWithdrawTransaction = async (
   }
 };
 
+// reject(decline) transactiom
 export const rejectTransaction = async (
   req: Request,
   res: Response
@@ -460,18 +468,16 @@ export const rejectTransaction = async (
         date: updatedTransaction.updatedAt,
       };
 
-
       // Send push notification(deposit declined)
       if (user?.fcmToken) {
         await sendPushNotification(
           user?.fcmToken,
           "Deposit Declined",
           `Dear ${user.lastName} ${user.firstName}, your deposit of ${updatedTransaction.coinQty} ${updatedTransaction.coin} at ₦${updatedTransaction.amount} has been declined`
-        )
+        );
       }
       // Send declined deposit email
       await sendDeclinedDepositEmail(data);
-
     } else if (updatedTransaction.type === "withdrawal") {
       const user = await User.findById(updatedTransaction.user);
       const data = {
@@ -515,6 +521,94 @@ export const rejectTransaction = async (
     });
   } catch (error) {
     console.error("Error rejecting transaction:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// get dasboard info
+export const getDashboardInfo = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  try {
+    const totalUsers = await User.countDocuments();
+    const suspendedUsers = await User.countDocuments({ isSuspended: true });
+    const nonSuspendedUsers = await User.countDocuments({ isSuspended: false });
+    const verifiedUsers = await User.countDocuments({ isVerified: true });
+
+    const totalTransactions = await Transaction.countDocuments();
+    const depositTransactions = await Transaction.countDocuments({
+      type: "deposit",
+    });
+    const successfulDepositTransactions = await Transaction.countDocuments({
+      type: "deposit",
+      status: "approved",
+    });
+    const withdrawalTransactions = await Transaction.countDocuments({
+      type: "withdrawal",
+    });
+    const successfulWithdrawalTransactions = await Transaction.countDocuments({
+      type: "withdrawal",
+      status: "approved",
+    });
+
+    res.status(200).json({
+      totalUsers,
+      suspendedUsers,
+      nonSuspendedUsers,
+      verifiedUsers,
+      totalTransactions,
+      depositTransactions,
+      successfulDepositTransactions,
+      withdrawalTransactions,
+      successfulWithdrawalTransactions,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// get dasboard info 30 days range
+export const getDashboardInfo30Days = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  try {
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+    const totalUsers30Days = await User.countDocuments({
+      createdAt: {
+        $gte: thirtyDaysAgo,
+      },
+    });
+
+    const totalTransactions30Days = await Transaction.countDocuments({
+      createdAt: {
+        $gte: thirtyDaysAgo,
+      },
+    });
+
+    const depositTransactions30Days = await Transaction.countDocuments({
+      type: "deposit",
+      createdAt: {
+        $gte: thirtyDaysAgo,
+      },
+    });
+
+    const withdrawalTransactions30Days = await Transaction.countDocuments({
+      type: "withdrawal",
+      createdAt: {
+        $gte: thirtyDaysAgo,
+      },
+    });
+
+    res.status(200).json({
+      totalUsers30Days,
+      totalTransactions30Days,
+      depositTransactions30Days,
+      withdrawalTransactions30Days,
+    });
+  } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
 };

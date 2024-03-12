@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.rejectTransaction = exports.approveWithdrawTransaction = exports.approveDepositTransaction = exports.getAllTransactions = exports.suspendUser = exports.getUserById = exports.getUsers = exports.verifyAdminLogin = exports.requestAdminLogin = exports.createAdmin = void 0;
+exports.getDashboardInfo30Days = exports.getDashboardInfo = exports.rejectTransaction = exports.approveWithdrawTransaction = exports.approveDepositTransaction = exports.getAllTransactions = exports.suspendUser = exports.getUserById = exports.getUsers = exports.verifyAdminLogin = exports.requestAdminLogin = exports.createAdmin = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const crypto_1 = require("crypto");
 const admin_1 = __importDefault(require("../models/admin"));
@@ -25,6 +25,7 @@ const wallet_1 = __importDefault(require("../models/wallet"));
 const approved_email_1 = require("../utils/email/approved-email");
 const declined_email_1 = require("../utils/email/declined-email");
 const notification_1 = require("../utils/notification");
+// create admin
 const createAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log(req.body);
@@ -64,6 +65,7 @@ const createAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.createAdmin = createAdmin;
+// request admin login to get otp
 const requestAdminLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email, password } = req.body;
@@ -103,6 +105,7 @@ const requestAdminLogin = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.requestAdminLogin = requestAdminLogin;
+// verify admin login
 const verifyAdminLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email, verificationToken } = req.body;
@@ -125,6 +128,7 @@ const verifyAdminLogin = (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.verifyAdminLogin = verifyAdminLogin;
+// get all users
 const getUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const users = yield user_1.default.find().select("-password");
@@ -192,6 +196,7 @@ const suspendUser = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.suspendUser = suspendUser;
+// get all transaction
 const getAllTransactions = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const transactions = yield transaction_1.default.find()
@@ -212,6 +217,7 @@ const getAllTransactions = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.getAllTransactions = getAllTransactions;
+// approve deposite transaction
 const approveDepositTransaction = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { transactionId } = req.params;
     const newInfo = req.body;
@@ -270,6 +276,7 @@ const approveDepositTransaction = (req, res) => __awaiter(void 0, void 0, void 0
     }
 });
 exports.approveDepositTransaction = approveDepositTransaction;
+// approve withdrawal transaction
 const approveWithdrawTransaction = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { transactionId } = req.params;
     const newInfo = req.body;
@@ -334,6 +341,7 @@ const approveWithdrawTransaction = (req, res) => __awaiter(void 0, void 0, void 
     }
 });
 exports.approveWithdrawTransaction = approveWithdrawTransaction;
+// reject(decline) transactiom
 const rejectTransaction = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { transactionId } = req.params;
     const newInfo = req.body;
@@ -417,6 +425,83 @@ const rejectTransaction = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.rejectTransaction = rejectTransaction;
+// get dasboard info
+const getDashboardInfo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const totalUsers = yield user_1.default.countDocuments();
+        const suspendedUsers = yield user_1.default.countDocuments({ isSuspended: true });
+        const nonSuspendedUsers = yield user_1.default.countDocuments({ isSuspended: false });
+        const verifiedUsers = yield user_1.default.countDocuments({ isVerified: true });
+        const totalTransactions = yield transaction_1.default.countDocuments();
+        const depositTransactions = yield transaction_1.default.countDocuments({
+            type: "deposit",
+        });
+        const successfulDepositTransactions = yield transaction_1.default.countDocuments({
+            type: "deposit",
+            status: "approved",
+        });
+        const withdrawalTransactions = yield transaction_1.default.countDocuments({
+            type: "withdrawal",
+        });
+        const successfulWithdrawalTransactions = yield transaction_1.default.countDocuments({
+            type: "withdrawal",
+            status: "approved",
+        });
+        res.status(200).json({
+            totalUsers,
+            suspendedUsers,
+            nonSuspendedUsers,
+            verifiedUsers,
+            totalTransactions,
+            depositTransactions,
+            successfulDepositTransactions,
+            withdrawalTransactions,
+            successfulWithdrawalTransactions,
+        });
+    }
+    catch (error) {
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+exports.getDashboardInfo = getDashboardInfo;
+// get dasboard info 30 days range
+const getDashboardInfo30Days = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        const totalUsers30Days = yield user_1.default.countDocuments({
+            createdAt: {
+                $gte: thirtyDaysAgo,
+            },
+        });
+        const totalTransactions30Days = yield transaction_1.default.countDocuments({
+            createdAt: {
+                $gte: thirtyDaysAgo,
+            },
+        });
+        const depositTransactions30Days = yield transaction_1.default.countDocuments({
+            type: "deposit",
+            createdAt: {
+                $gte: thirtyDaysAgo,
+            },
+        });
+        const withdrawalTransactions30Days = yield transaction_1.default.countDocuments({
+            type: "withdrawal",
+            createdAt: {
+                $gte: thirtyDaysAgo,
+            },
+        });
+        res.status(200).json({
+            totalUsers30Days,
+            totalTransactions30Days,
+            depositTransactions30Days,
+            withdrawalTransactions30Days,
+        });
+    }
+    catch (error) {
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+exports.getDashboardInfo30Days = getDashboardInfo30Days;
 // routes ends here //
 // emails starts herer //
 function sendVerificationEmail(admin) {

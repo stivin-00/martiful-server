@@ -5,7 +5,7 @@
   "main": "dist/server.js",
   "scripts": {
     "start": "npx ts-node dist/server.js",
-    "dev": "nodemon --exec npx ts-node dist/server.ts",
+    "dev": "nodemon --exec npx ts-node src/server.ts",
     "build": "tsc"
   },
   "author": "stivin",
