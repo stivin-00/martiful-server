@@ -15,6 +15,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.withdraw = exports.deposit = exports.getWallet = exports.createWallet = void 0;
 const wallet_1 = __importDefault(require("../models/wallet"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const transaction_1 = __importDefault(require("../models/transaction"));
 const user_1 = __importDefault(require("../models/user"));
 const email_1 = require("../utils/email/email");
@@ -55,8 +56,18 @@ const deposit = (userId, amount, image, coin, coinQty, rate, amountInUSD, ourWal
     }
 });
 exports.deposit = deposit;
-const withdraw = (userId, amount, bankName, accountNumber, accountName) => __awaiter(void 0, void 0, void 0, function* () {
+const withdraw = (userId, amount, bankName, accountNumber, accountName, password) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const user = yield user_1.default.findById(userId);
+        // Verify user exists
+        if (!user) {
+            throw new Error('User not found');
+        }
+        // Verify password
+        const isPasswordValid = yield bcrypt_1.default.compare(password, user.password);
+        if (!isPasswordValid) {
+            throw new Error('Invalid password');
+        }
         const wallet = yield wallet_1.default.findOne({ user: userId });
         // Log the withdrawal as a transaction
         const transaction = yield logWithdrawTransaction(userId, wallet === null || wallet === void 0 ? void 0 : wallet._id, amount, "withdrawal", "pending", bankName, accountNumber, accountName, "Withdrawal request received successfully, awaiting confirmation from admin");

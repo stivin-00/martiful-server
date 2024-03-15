@@ -83,13 +83,15 @@ walletRouter.post(
   authenticateUser,
   async (req: AuthRequest<any>, res) => {
     try {
-      const { amount, bankName, accountNumber, accountName } = req.body;
+      const { amount, bankName, accountNumber, accountName, password } =
+        req.body;
       const transaction = await withdraw(
         req.user._id,
         amount,
         bankName,
         accountNumber,
-        accountName
+        accountName,
+        password
       );
       if (transaction) {
         res.status(200).json({ transaction, message: "Withdrawal successful" });

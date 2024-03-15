@@ -1,7 +1,7 @@
 // controllers/walletController.ts
 
-import { Request, Response } from "express";
 import Wallet from "../models/wallet";
+import bcrypt from "bcrypt";
 import Transaction, { TransactionDocument } from "../models/transaction";
 import { WalletDocument } from "../types/wallet";
 import User from "../models/user";
@@ -10,6 +10,7 @@ import {
   receivedDepositEmail,
   receivedWithdrawalEmail,
 } from "../utils/email/recieived-emails";
+import { resetPassword } from "./authController";
 
 export const createWallet = async (userId: string): Promise<WalletDocument> => {
   try {
@@ -78,9 +79,25 @@ export const withdraw = async (
   amount: number,
   bankName: string,
   accountNumber: string,
-  accountName: string
+  accountName: string,
+  password: string
 ): Promise<TransactionDocument | null> => {
   try {
+
+    const user = await User.findById(userId);
+
+    // Verify user exists
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Verify password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new Error('Invalid password');
+    }
+
+
     const wallet = await Wallet.findOne({ user: userId });
 
     // Log the withdrawal as a transaction

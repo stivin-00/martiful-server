@@ -56,8 +56,8 @@ walletRouter.post("/deposit", authMiddleware_1.authenticateUser, (req, res) => _
 }));
 walletRouter.post("/withdraw", authMiddleware_1.authenticateUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { amount, bankName, accountNumber, accountName } = req.body;
-        const transaction = yield (0, walletController_1.withdraw)(req.user._id, amount, bankName, accountNumber, accountName);
+        const { amount, bankName, accountNumber, accountName, password } = req.body;
+        const transaction = yield (0, walletController_1.withdraw)(req.user._id, amount, bankName, accountNumber, accountName, password);
         if (transaction) {
             res.status(200).json({ transaction, message: "Withdrawal successful" });
         }
