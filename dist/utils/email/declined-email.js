@@ -195,7 +195,7 @@ table, td { color: #000000; } @media (max-width: 480px) { #u_content_image_1 .v-
       <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;" align="left">
         
   <!--[if mso]><table width="100%"><tr><td><![endif]-->
-    <h4 class="v-color v-text-align v-font-size" style="margin: 0px; color: #575554; line-height: 140%; text-align: left; word-wrap: break-word; font-size: 16px; font-weight: 400;"><span><span><span><span>Dear agbakwuru ekele stephen</span></span></span></span></h4>
+    <h4 class="v-color v-text-align v-font-size" style="margin: 0px; color: #575554; line-height: 140%; text-align: left; word-wrap: break-word; font-size: 16px; font-weight: 400;"><span><span><span><span>Dear ${data === null || data === void 0 ? void 0 : data.name}</span></span></span></span></h4>
   <!--[if mso]></td></tr></table><![endif]-->
 
       </td>
@@ -773,7 +773,7 @@ const declinedDepositEmail = (data) => {
         <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;" align="left">
           
     <!--[if mso]><table width="100%"><tr><td><![endif]-->
-      <h4 class="v-color v-text-align v-font-size" style="margin: 0px; color: #575554; line-height: 140%; text-align: left; word-wrap: break-word; font-size: 16px; font-weight: 400;"><span><span><span><span>Dear agbakwuru ekele stephen</span></span></span></span></h4>
+      <h4 class="v-color v-text-align v-font-size" style="margin: 0px; color: #575554; line-height: 140%; text-align: left; word-wrap: break-word; font-size: 16px; font-weight: 400;"><span><span><span><span>Dear ${data === null || data === void 0 ? void 0 : data.name}</span></span></span></span></h4>
     <!--[if mso]></td></tr></table><![endif]-->
   
         </td>

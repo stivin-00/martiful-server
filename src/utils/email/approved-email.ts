@@ -274,7 +274,9 @@ table, td { color: #000000; } @media (max-width: 480px) { #u_content_heading_1 .
       <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;" align="left">
         
   <!--[if mso]><table width="100%"><tr><td><![endif]-->
-    <h1 class="v-line-height v-font-size" style="margin: 0px; line-height: 40%; text-align: center; word-wrap: break-word; font-size: 22px; font-weight: 700;"><span><span style="line-height: 8.8px;"><span style="line-height: 8.8px;"><span style="line-height: 8.8px;">NGN ${data?.amount}</span></span></span></span></h1>
+    <h1 class="v-line-height v-font-size" style="margin: 0px; line-height: 40%; text-align: center; word-wrap: break-word; font-size: 22px; font-weight: 700;"><span><span style="line-height: 8.8px;"><span style="line-height: 8.8px;"><span style="line-height: 8.8px;">NGN ${
+      data?.amount
+    }</span></span></span></span></h1>
   <!--[if mso]></td></tr></table><![endif]-->
 
       </td>
@@ -1206,7 +1208,9 @@ table, td { color: #000000; } @media (max-width: 480px) { #u_content_heading_1 .
       <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;" align="left">
         
   <!--[if mso]><table width="100%"><tr><td><![endif]-->
-    <h4 class="v-line-height v-font-size" style="margin: 0px; line-height: 140%; text-align: left; word-wrap: break-word; font-size: 14px; font-weight: 400;"><span><span><span><span><span><span><span>Dear Agbakwuru Ekele Stephen</span></span></span></span></span></span></span></h4>
+    <h4 class="v-line-height v-font-size" style="margin: 0px; line-height: 140%; text-align: left; word-wrap: break-word; font-size: 14px; font-weight: 400;"><span><span><span><span><span><span><span>Dear ${
+      data?.name
+    }</span></span></span></span></span></span></span></h4>
   <!--[if mso]></td></tr></table><![endif]-->
 
       </td>
@@ -1234,7 +1238,9 @@ table, td { color: #000000; } @media (max-width: 480px) { #u_content_heading_1 .
       <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;" align="left">
         
   <!--[if mso]><table width="100%"><tr><td><![endif]-->
-    <h1 class="v-line-height v-font-size" style="margin: 0px; line-height: 40%; text-align: center; word-wrap: break-word; font-size: 22px; font-weight: 700;"><span><span style="line-height: 8.8px;"><span style="line-height: 8.8px;"><span style="line-height: 8.8px;">NGN ${data?.amount}</span></span></span></span></h1>
+    <h1 class="v-line-height v-font-size" style="margin: 0px; line-height: 40%; text-align: center; word-wrap: break-word; font-size: 22px; font-weight: 700;"><span><span style="line-height: 8.8px;"><span style="line-height: 8.8px;"><span style="line-height: 8.8px;">NGN ${
+      data?.amount
+    }</span></span></span></span></h1>
   <!--[if mso]></td></tr></table><![endif]-->
 
       </td>
@@ -1865,7 +1871,7 @@ table, td { color: #000000; } @media (max-width: 480px) { #u_content_heading_1 .
 //
 
 function formatDateTime(dateString: string | number | Date) {
-  const options: Intl.DateTimeFormatOptions  = {
+  const options: Intl.DateTimeFormatOptions = {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",

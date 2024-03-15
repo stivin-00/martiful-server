@@ -180,7 +180,7 @@ const receivedDepositEmail = (data) => {
         <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;" align="left">
           
     <!--[if mso]><table width="100%"><tr><td><![endif]-->
-      <h4 class="v-font-size" style="margin: 0px; color: #575554; line-height: 140%; text-align: left; word-wrap: break-word; font-size: 16px; font-weight: 400;"><span><span>Dear agbakwuru ekele stephen</span></span></h4>
+      <h4 class="v-font-size" style="margin: 0px; color: #575554; line-height: 140%; text-align: left; word-wrap: break-word; font-size: 16px; font-weight: 400;"><span><span>Dear ${data === null || data === void 0 ? void 0 : data.name}</span></span></h4>
     <!--[if mso]></td></tr></table><![endif]-->
   
         </td>
@@ -772,7 +772,7 @@ const receivedWithdrawalEmail = (data) => {
         <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;" align="left">
           
     <!--[if mso]><table width="100%"><tr><td><![endif]-->
-      <h4 class="v-font-size" style="margin: 0px; color: #575554; line-height: 140%; text-align: left; word-wrap: break-word; font-size: 16px; font-weight: 400;"><span><span>Dear agbakwuru ekele stephen</span></span></h4>
+      <h4 class="v-font-size" style="margin: 0px; color: #575554; line-height: 140%; text-align: left; word-wrap: break-word; font-size: 16px; font-weight: 400;"><span><span>Dear ${data === null || data === void 0 ? void 0 : data.name}</span></span></h4>
     <!--[if mso]></td></tr></table><![endif]-->
   
         </td>
