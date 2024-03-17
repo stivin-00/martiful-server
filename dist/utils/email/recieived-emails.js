@@ -222,7 +222,7 @@ const receivedDepositEmail = (data) => {
         <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:3px 10px 10px;font-family:arial,helvetica,sans-serif;" align="left">
           
     <!--[if mso]><table width="100%"><tr><td><![endif]-->
-      <h4 class="v-font-size" style="margin: 0px; line-height: 140%; text-align: center; word-wrap: break-word; font-family: arial black,AvenirNext-Heavy,avant garde,arial; font-size: 18px; font-weight: 700;"><span><span><span><span>₦${data === null || data === void 0 ? void 0 : data.amount} ~ (₦4${data === null || data === void 0 ? void 0 : data.rate}/$)</span></span></span></span></h4>
+      <h4 class="v-font-size" style="margin: 0px; line-height: 140%; text-align: center; word-wrap: break-word; font-family: arial black,AvenirNext-Heavy,avant garde,arial; font-size: 18px; font-weight: 700;"><span><span><span><span>₦${data === null || data === void 0 ? void 0 : data.amount} ~ (₦${data === null || data === void 0 ? void 0 : data.rate}/$)</span></span></span></span></h4>
     <!--[if mso]></td></tr></table><![endif]-->
   
         </td>

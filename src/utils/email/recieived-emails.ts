@@ -1,5 +1,3 @@
-
-
 /**
  * Generate and send a deposit received email.
  *
@@ -179,7 +177,9 @@ export const receivedDepositEmail = (data: any): string => {
         <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;" align="left">
           
     <!--[if mso]><table width="100%"><tr><td><![endif]-->
-      <h4 class="v-font-size" style="margin: 0px; color: #575554; line-height: 140%; text-align: left; word-wrap: break-word; font-size: 16px; font-weight: 400;"><span><span>Dear ${data?.name}</span></span></h4>
+      <h4 class="v-font-size" style="margin: 0px; color: #575554; line-height: 140%; text-align: left; word-wrap: break-word; font-size: 16px; font-weight: 400;"><span><span>Dear ${
+        data?.name
+      }</span></span></h4>
     <!--[if mso]></td></tr></table><![endif]-->
   
         </td>
@@ -207,7 +207,9 @@ export const receivedDepositEmail = (data: any): string => {
         <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:10px 10px 0px;font-family:arial,helvetica,sans-serif;" align="left">
           
     <!--[if mso]><table width="100%"><tr><td><![endif]-->
-      <h4 class="v-font-size" style="margin: 0px; line-height: 140%; text-align: center; word-wrap: break-word; font-family: arial black,AvenirNext-Heavy,avant garde,arial; font-size: 17px; font-weight: 700;"><span><span><span><span>${data?.coinQty}(${data?.coin})</span></span></span></span></h4>
+      <h4 class="v-font-size" style="margin: 0px; line-height: 140%; text-align: center; word-wrap: break-word; font-family: arial black,AvenirNext-Heavy,avant garde,arial; font-size: 17px; font-weight: 700;"><span><span><span><span>${
+        data?.coinQty
+      }(${data?.coin})</span></span></span></span></h4>
     <!--[if mso]></td></tr></table><![endif]-->
   
         </td>
@@ -221,7 +223,9 @@ export const receivedDepositEmail = (data: any): string => {
         <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:3px 10px 10px;font-family:arial,helvetica,sans-serif;" align="left">
           
     <!--[if mso]><table width="100%"><tr><td><![endif]-->
-      <h4 class="v-font-size" style="margin: 0px; line-height: 140%; text-align: center; word-wrap: break-word; font-family: arial black,AvenirNext-Heavy,avant garde,arial; font-size: 18px; font-weight: 700;"><span><span><span><span>₦${data?.amount} ~ (₦4${data?.rate}/$)</span></span></span></span></h4>
+      <h4 class="v-font-size" style="margin: 0px; line-height: 140%; text-align: center; word-wrap: break-word; font-family: arial black,AvenirNext-Heavy,avant garde,arial; font-size: 18px; font-weight: 700;"><span><span><span><span>₦${
+        data?.amount
+      } ~ (₦${data?.rate}/$)</span></span></span></span></h4>
     <!--[if mso]></td></tr></table><![endif]-->
   
         </td>
@@ -258,7 +262,9 @@ export const receivedDepositEmail = (data: any): string => {
         <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:22px;font-family:arial,helvetica,sans-serif;" align="left">
           
     <!--[if mso]><table width="100%"><tr><td><![endif]-->
-      <h4 class="v-font-size" style="margin: 0px; color: #169179; line-height: 140%; text-align: center; word-wrap: break-word; font-family: comic sans ms,sans-serif; font-size: 16px; font-weight: 400;"><span><span><span><span><span><span>${data?.message}</span></span></span></span></span></span></h4>
+      <h4 class="v-font-size" style="margin: 0px; color: #169179; line-height: 140%; text-align: center; word-wrap: break-word; font-family: comic sans ms,sans-serif; font-size: 16px; font-weight: 400;"><span><span><span><span><span><span>${
+        data?.message
+      }</span></span></span></span></span></span></h4>
     <!--[if mso]></td></tr></table><![endif]-->
   
         </td>
@@ -771,7 +777,9 @@ export const receivedWithdrawalEmail = (data: any): string => {
         <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;" align="left">
           
     <!--[if mso]><table width="100%"><tr><td><![endif]-->
-      <h4 class="v-font-size" style="margin: 0px; color: #575554; line-height: 140%; text-align: left; word-wrap: break-word; font-size: 16px; font-weight: 400;"><span><span>Dear ${data?.name}</span></span></h4>
+      <h4 class="v-font-size" style="margin: 0px; color: #575554; line-height: 140%; text-align: left; word-wrap: break-word; font-size: 16px; font-weight: 400;"><span><span>Dear ${
+        data?.name
+      }</span></span></h4>
     <!--[if mso]></td></tr></table><![endif]-->
   
         </td>
@@ -799,7 +807,9 @@ export const receivedWithdrawalEmail = (data: any): string => {
         <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:10px 10px 0px;font-family:arial,helvetica,sans-serif;" align="left">
           
     <!--[if mso]><table width="100%"><tr><td><![endif]-->
-      <h4 class="v-font-size" style="margin: 0px; line-height: 140%; text-align: center; word-wrap: break-word; font-family: arial black,AvenirNext-Heavy,avant garde,arial; font-size: 17px; font-weight: 700;"><span><span><span><span>₦${data.amount}</span></span></span></span></h4>
+      <h4 class="v-font-size" style="margin: 0px; line-height: 140%; text-align: center; word-wrap: break-word; font-family: arial black,AvenirNext-Heavy,avant garde,arial; font-size: 17px; font-weight: 700;"><span><span><span><span>₦${
+        data.amount
+      }</span></span></span></span></h4>
     <!--[if mso]></td></tr></table><![endif]-->
   
         </td>
@@ -837,7 +847,9 @@ export const receivedWithdrawalEmail = (data: any): string => {
         <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:22px;font-family:arial,helvetica,sans-serif;" align="left">
           
     <!--[if mso]><table width="100%"><tr><td><![endif]-->
-      <h4 class="v-font-size" style="margin: 0px; color: #169179; line-height: 140%; text-align: center; word-wrap: break-word; font-family: comic sans ms,sans-serif; font-size: 16px; font-weight: 400;"><span><span><span><span><span><span>${data.message}</span></span></span></span></span></span></span></span></span></h4>
+      <h4 class="v-font-size" style="margin: 0px; color: #169179; line-height: 140%; text-align: center; word-wrap: break-word; font-family: comic sans ms,sans-serif; font-size: 16px; font-weight: 400;"><span><span><span><span><span><span>${
+        data.message
+      }</span></span></span></span></span></span></span></span></span></h4>
     <!--[if mso]></td></tr></table><![endif]-->
   
         </td>
@@ -1032,7 +1044,7 @@ export const receivedWithdrawalEmail = (data: any): string => {
         <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:0px 6px 0px 0px;font-family:arial,helvetica,sans-serif;" align="left">
           
     <div class="v-font-size" style="font-size: 14px; line-height: 140%; text-align: right; word-wrap: break-word;">
-      <p style="line-height: 140%;">${data. bankName}</p>
+      <p style="line-height: 140%;">${data.bankName}</p>
     </div>
   
         </td>
