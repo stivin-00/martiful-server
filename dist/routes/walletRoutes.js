@@ -66,8 +66,7 @@ walletRouter.post("/withdraw", authMiddleware_1.authenticateUser, (req, res) => 
         }
     }
     catch (error) {
-        console.error("Error withdrawing from wallet:", error);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: error.message });
     }
 }));
 walletRouter.get("/transactions", authMiddleware_1.authenticateUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

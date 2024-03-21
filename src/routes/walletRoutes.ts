@@ -98,9 +98,8 @@ walletRouter.post(
       } else {
         res.status(400).json({ message: "Insufficient balance" });
       }
-    } catch (error) {
-      console.error("Error withdrawing from wallet:", error);
-      res.status(500).json({ message: "Internal server error" });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
     }
   }
 );
