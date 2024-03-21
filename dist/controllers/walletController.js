@@ -114,7 +114,7 @@ const logDepositTransaction = (user, walletId, amount, image, type, status, coin
                 status,
                 date: transaction.createdAt,
             };
-            yield sendDepositReceivedEmail(data);
+            // await sendDepositReceivedEmail(data);
             return transaction;
         }
     }
@@ -153,7 +153,7 @@ const logWithdrawTransaction = (user, walletId, amount, type, status, bankName, 
                 wallet: transaction.wallet,
                 date: transaction.createdAt,
             };
-            yield sendWithdrawReceivedEmail(data);
+            // await sendWithdrawReceivedEmail(data);
             return transaction;
         }
     }

@@ -170,7 +170,7 @@ const logDepositTransaction = async (
         status,
         date: transaction.createdAt,
       };
-      await sendDepositReceivedEmail(data);
+      // await sendDepositReceivedEmail(data);
 
       return transaction;
     }
@@ -221,7 +221,7 @@ const logWithdrawTransaction = async (
         wallet: transaction.wallet,
         date: transaction.createdAt,
       };
-      await sendWithdrawReceivedEmail(data);
+      // await sendWithdrawReceivedEmail(data);
 
       return transaction;
     }
