@@ -53,7 +53,7 @@ walletRouter.post(
         rate,
         amountInUSD,
         ourWalletAddress,
-        yourWalletAddress,
+
       } = req.body;
       const transaction = await deposit(
         req.user._id,
@@ -64,7 +64,6 @@ walletRouter.post(
         rate,
         amountInUSD,
         ourWalletAddress,
-        yourWalletAddress
       );
       if (transaction) {
         res.status(200).json({ transaction, message: "Deposit successful" });

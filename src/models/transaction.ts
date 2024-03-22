@@ -18,7 +18,6 @@ export interface TransactionDocument extends mongoose.Document {
   accountName: string;
   amountInUSD: number;
   ourWalletAddress: string;
-  yourWalletAddress: string;
   rate: number;
   message: string;
   createdAt: Date;
@@ -44,7 +43,7 @@ const transactionSchema = new Schema(
     accountName: { type: String, required: false },
     amountInUSD: { type: Number, required: false },
     ourWalletAddress: { type: String, required: false },
-    yourWalletAddress: { type: String, required: false },
+  
     rate: { type: Number, required: false },
     message: { type: String, required: false },
   },

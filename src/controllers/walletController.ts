@@ -44,8 +44,7 @@ export const deposit = async (
   coinQty: number,
   rate: number,
   amountInUSD: number,
-  ourWalletAddress: string,
-  yourWalletAddress: string
+  ourWalletAddress: string
 ): Promise<TransactionDocument | null> => {
   try {
     const wallet = await Wallet.findOne({ user: userId });
@@ -63,7 +62,6 @@ export const deposit = async (
       rate,
       amountInUSD,
       ourWalletAddress,
-      yourWalletAddress,
       "Transaction received successfully, awaiting confirmation from admin"
     );
 
@@ -83,20 +81,18 @@ export const withdraw = async (
   password: string
 ): Promise<TransactionDocument | null> => {
   try {
-
     const user = await User.findById(userId);
 
     // Verify user exists
     if (!user) {
-      throw new Error('User not found');
+      throw new Error("User not found");
     }
 
     // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new Error('Invalid password');
+      throw new Error("Invalid password");
     }
-
 
     const wallet = await Wallet.findOne({ user: userId });
 
@@ -132,7 +128,6 @@ const logDepositTransaction = async (
   rate: number,
   amountInUSD: number,
   ourWalletAddress: string,
-  yourWalletAddress: string,
   message: string
 ): Promise<any> => {
   try {
@@ -149,7 +144,7 @@ const logDepositTransaction = async (
         rate,
         amountInUSD,
         ourWalletAddress,
-        yourWalletAddress,
+
         message,
       });
       await transaction.save();

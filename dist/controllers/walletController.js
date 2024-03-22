@@ -43,11 +43,11 @@ const getWallet = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.getWallet = getWallet;
-const deposit = (userId, amount, image, coin, coinQty, rate, amountInUSD, ourWalletAddress, yourWalletAddress) => __awaiter(void 0, void 0, void 0, function* () {
+const deposit = (userId, amount, image, coin, coinQty, rate, amountInUSD, ourWalletAddress) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const wallet = yield wallet_1.default.findOne({ user: userId });
         // Log the deposit as a transaction
-        const transaction = yield logDepositTransaction(userId, wallet === null || wallet === void 0 ? void 0 : wallet._id, amount, image, "deposit", "pending", coin, coinQty, rate, amountInUSD, ourWalletAddress, yourWalletAddress, "Transaction received successfully, awaiting confirmation from admin");
+        const transaction = yield logDepositTransaction(userId, wallet === null || wallet === void 0 ? void 0 : wallet._id, amount, image, "deposit", "pending", coin, coinQty, rate, amountInUSD, ourWalletAddress, "Transaction received successfully, awaiting confirmation from admin");
         return transaction;
     }
     catch (error) {
@@ -61,12 +61,12 @@ const withdraw = (userId, amount, bankName, accountNumber, accountName, password
         const user = yield user_1.default.findById(userId);
         // Verify user exists
         if (!user) {
-            throw new Error('User not found');
+            throw new Error("User not found");
         }
         // Verify password
         const isPasswordValid = yield bcrypt_1.default.compare(password, user.password);
         if (!isPasswordValid) {
-            throw new Error('Invalid password');
+            throw new Error("Invalid password");
         }
         const wallet = yield wallet_1.default.findOne({ user: userId });
         // Log the withdrawal as a transaction
@@ -79,7 +79,7 @@ const withdraw = (userId, amount, bankName, accountNumber, accountName, password
     }
 });
 exports.withdraw = withdraw;
-const logDepositTransaction = (user, walletId, amount, image, type, status, coin, coinQty, rate, amountInUSD, ourWalletAddress, yourWalletAddress, message) => __awaiter(void 0, void 0, void 0, function* () {
+const logDepositTransaction = (user, walletId, amount, image, type, status, coin, coinQty, rate, amountInUSD, ourWalletAddress, message) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (walletId) {
             const transaction = new transaction_1.default({
@@ -94,7 +94,6 @@ const logDepositTransaction = (user, walletId, amount, image, type, status, coin
                 rate,
                 amountInUSD,
                 ourWalletAddress,
-                yourWalletAddress,
                 message,
             });
             yield transaction.save();

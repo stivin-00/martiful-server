@@ -40,8 +40,8 @@ walletRouter.get("/", authMiddleware_1.authenticateUser, (req, res) => __awaiter
 }));
 walletRouter.post("/deposit", authMiddleware_1.authenticateUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { amount, image, coin, coinQty, rate, amountInUSD, ourWalletAddress, yourWalletAddress, } = req.body;
-        const transaction = yield (0, walletController_1.deposit)(req.user._id, amount, image, coin, coinQty, rate, amountInUSD, ourWalletAddress, yourWalletAddress);
+        const { amount, image, coin, coinQty, rate, amountInUSD, ourWalletAddress, } = req.body;
+        const transaction = yield (0, walletController_1.deposit)(req.user._id, amount, image, coin, coinQty, rate, amountInUSD, ourWalletAddress);
         if (transaction) {
             res.status(200).json({ transaction, message: "Deposit successful" });
         }

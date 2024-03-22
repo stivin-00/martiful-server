@@ -43,7 +43,6 @@ const transactionSchema = new mongoose_1.Schema({
     accountName: { type: String, required: false },
     amountInUSD: { type: Number, required: false },
     ourWalletAddress: { type: String, required: false },
-    yourWalletAddress: { type: String, required: false },
     rate: { type: Number, required: false },
     message: { type: String, required: false },
 }, {
